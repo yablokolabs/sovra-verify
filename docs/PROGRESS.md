@@ -638,7 +638,15 @@ No-footer inspection: PASS — the two report sources are now inside the static 
 Story/tag claim changes: `frontend-slides` added to docs/BUILT_WITH.md (23 of the allowed 25), described
   as a local authoring skill whose 1920x1080 stage was explicitly not used; README now lists the deck
   edition and the 265-test count it had drifted below
-One exact next action: commit and push the deck, the builder, the coverage change and these docs.
+  make test -> EXIT 0, 265 passed, 1 skipped (rerun after check_no_footer.py and audit_secrets.py
+      changed, because the suite imports both)
+  make audit -> EXIT 0, 154 publishable files, and every archive in the tree re-opened and scanned
+  scripts/package_submission.py -> EXIT 0, 154 members, then re-opened and audited; every member's bytes
+      were compared against the working tree afterwards: 0 differ, 0 missing, 0 from .worktrees
+  digest check over docs/KIT_MANIFEST.json -> the 3 entries this work changed (README.md,
+      docs/BUILT_WITH.md, docs/PROGRESS.md) were recomputed; all 8 recorded digests match the files
+One exact next action: none — the deck, the archive and the record agree; the work is committed as
+  bee9ba0 on main and pushed (9dc5c89..bee9ba0).
 Recovery note: the prose edition is unchanged by this work — `make report-pdf` still produces the same
   five-page `track_2b/technical_report.pdf` (4 body pages + the reference page), verified after the
   shared renderer gained its font argument.
