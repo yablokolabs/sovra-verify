@@ -345,7 +345,9 @@ Actual implemented behavior:
   (c) evaluate.py reports accuracy_on_compared_cases, the negative-case clean rate and a diagnostics
       block of case ids, without redefining accuracy
 Command / exit code / result:
-  pytest track_2b/tests -q                 -> EXIT 0, 247 passed, 1 skipped
+  pytest track_2b/tests -q                 -> EXIT 0, 248 passed, 1 skipped
+      covers the comparison context at the request level, the per-relation coverage counts, the HTTP
+      contract that the coverage block agrees with the findings, and the evaluation metrics
   npx tsc --noEmit; npm run build          -> EXIT 0, 174.03 kB js / 7.63 kB css
   make evaluate (real inference)           -> EXIT 0
       cases 25, correct 9, accuracy 0.36          <- UNCHANGED from sovra-prompts-3
@@ -355,6 +357,8 @@ Command / exit code / result:
       provider calls 41 (0 failed), 158.3 s, 37,550 tokens, mean 1,502 per case
       diagnostics: never_compared 11, false_alarm 2, missed_inconsistency 1, silent_negative 8
   make report-pdf                          -> EXIT 0, 4 body pages (limit 6), 0 footer fragments
+  npm run build (track_2b/frontend)        -> EXIT 0, 174.03 kB js; the new coverage sentences are
+      present in the bundle the backend serves at /app (checked by searching the built asset)
 Model / provider / mode / usage:
   cscs / swiss-ai/Apertus-v1.5-70B / claims+compare / 41 calls, 0 failed
 Blocker: location = docs/EVALUATION.md, the attributed cause of the five false positives

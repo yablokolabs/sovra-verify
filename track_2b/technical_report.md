@@ -239,7 +239,7 @@ conclusions, automated policy changes, dollar cost, customer adoption, or accura
 6. `docs/DEPLOYMENT.md` — deployment modes, credential injection, cost and security notes.
 7. `track_2b/backend/sovra/citations.py`, `normalize.py`, `compare.py`, `pipeline.py` — the evidence
    model, pairing rules and failure handling as implemented.
-8. `track_2b/tests/` — 247 unit, integration and end-to-end tests, including the cross-document
+8. `track_2b/tests/` — 248 unit, integration and end-to-end tests, including the cross-document
    citation assertion, tests that prove both credential audits detect a planted canary, and tests that
    read the comparison prompt that was actually sent to check the document context reaches the model.
 9. CSCS LLM Inference API service documentation,

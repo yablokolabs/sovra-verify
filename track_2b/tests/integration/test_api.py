@@ -191,6 +191,26 @@ def test_analysis_response_carries_usage_and_the_warning(api_client, analysed):
     assert set(body["relation_counts"]) >= {"consistent", "potential_conflict", "unrelated"}
 
 
+def test_analysis_response_states_what_was_compared(api_client, analysed):
+    """The coverage block the reviewer reads must agree with the findings they see.
+
+    A run that reports nothing has to say what it compared, and the per-relation
+    counts are the part a reviewer can check against the finding list.
+    """
+    _client, analysis = analysed
+    body = _client.get(f"/analyses/{analysis['id']}").json()
+    coverage = body["analysis"]["candidate_coverage"]
+
+    assert coverage["pairs_compared"] >= 1
+    assert "comparisons_without_finding" in coverage
+
+    counted: dict[str, int] = {}
+    for finding in body["analysis"]["findings"]:
+        counted[finding["relation"]] = counted.get(finding["relation"], 0) + 1
+    assert coverage["outcomes"] == counted
+    assert coverage["inconsistencies_reported"] == counted.get("potential_conflict", 0)
+
+
 def test_claims_endpoint_returns_claims_for_a_real_analysis(api_client, analysed):
     _client, analysis = analysed
     claims = _client.get(f"/analyses/{analysis['id']}/claims").json()["claims"]

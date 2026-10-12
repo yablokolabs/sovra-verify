@@ -56,7 +56,7 @@ its provider, model, mode, latency, token usage and error class.
 ```bash
 make run          # documented entry point: Docker, app + API
 make run-local    # host process instead
-make test         # 247 unit, integration and end-to-end tests
+make test         # 248 unit, integration and end-to-end tests
 make evaluate     # frozen evaluation corpus against real inference
 make no-footer    # footer audit over source, build output, PDF pages and every route
 make audit        # fails if a credential or a forbidden file could be published
