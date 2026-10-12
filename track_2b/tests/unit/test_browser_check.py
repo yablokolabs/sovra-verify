@@ -142,6 +142,72 @@ def test_an_empty_finding_list_must_be_explained() -> None:
     assert browser_check.check_rendered_text(explained)["empty_state_sentence"] is True
 
 
+# -- the header mark -------------------------------------------------------
+class FakeResponse:
+    def __init__(self, status_code: int, content_type: str, body: bytes = b"\x89PNG") -> None:
+        self.status_code = status_code
+        self.headers = {"content-type": content_type}
+        self.content = body
+
+
+def fake_fetch(response):
+    calls: list[str] = []
+
+    def _fetch(url: str) -> FakeResponse:
+        calls.append(url)
+        return response
+
+    return _fetch, calls
+
+
+def test_a_served_header_mark_passes_and_records_its_url() -> None:
+    fetch, calls = fake_fetch(FakeResponse(200, "image/png", b"x" * 71892))
+    reading = state()
+    reading["logo"] = {
+        "present": True,
+        "src": "http://127.0.0.1:8098/app/sovra-logo.png",
+        "natural_width": 0,
+    }
+    result = browser_check.check_logo(reading, "http://127.0.0.1:8098", fetch=fetch)
+    assert result["status"] == 200
+    assert result["bytes"] == 71892
+    assert calls == ["http://127.0.0.1:8098/app/sovra-logo.png"]
+    # A reported decode width of 0 is recorded, not treated as a failure: this
+    # browser answers 0 for every image.
+    assert result["decoded_width_reported"] == 0
+
+
+def test_a_relative_mark_url_is_resolved_against_the_app() -> None:
+    fetch, calls = fake_fetch(FakeResponse(200, "image/png"))
+    reading = state()
+    reading["logo"] = {"present": True, "src": "/app/sovra-logo.png"}
+    browser_check.check_logo(reading, "http://127.0.0.1:8098", fetch=fetch)
+    assert calls == ["http://127.0.0.1:8098/app/sovra-logo.png"]
+
+
+def test_a_header_mark_the_server_does_not_serve_fails() -> None:
+    fetch, _ = fake_fetch(FakeResponse(404, "application/json", b'{"detail":"Not Found"}'))
+    reading = state()
+    reading["logo"] = {"present": True, "src": "/sovra-logo.png"}
+    with pytest.raises(browser_check.CheckFailed, match="the server answers with HTTP 404"):
+        browser_check.check_logo(reading, "http://127.0.0.1:8098", fetch=fetch)
+
+
+def test_a_header_mark_served_as_something_other_than_an_image_fails() -> None:
+    fetch, _ = fake_fetch(FakeResponse(200, "text/html", b"<html>"))
+    reading = state()
+    reading["logo"] = {"present": True, "src": "/app/sovra-logo.png"}
+    with pytest.raises(browser_check.CheckFailed, match="no content type|text/html"):
+        browser_check.check_logo(reading, "http://127.0.0.1:8098", fetch=fetch)
+
+
+def test_a_page_without_a_header_mark_fails() -> None:
+    reading = state()
+    reading["logo"] = {"present": False}
+    with pytest.raises(browser_check.CheckFailed, match="no brand mark element"):
+        browser_check.check_logo(reading, "http://127.0.0.1:8098", fetch=lambda url: None)
+
+
 # -- what reaches the page -------------------------------------------------
 def test_a_string_becomes_a_quoted_literal() -> None:
     assert browser_check.js_string("Select all") == '"Select all"'

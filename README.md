@@ -121,19 +121,23 @@ DevTools Protocol — and reads the panel a reviewer reads. `make ui-check-full`
 "Select all" and "Analyse corpus with Apertus" and waits for a real run.
 
 Checked from the rendered page, not from the code: the interface finished loading its own data; the
-candidate-coverage notice is present and, when pairs were compared, states how they were judged; a
-completed run that reported nothing says so in words; the prototype warning sits next to the controls;
-and no footer marker appears in the rendered text or in the DOM that produced it (the same marker
-list `make no-footer` uses). Screenshots and a machine-readable record are written to
+header mark resolves to a URL the server actually serves as an image (a broken image is silent on a
+page — the layout keeps the box and the header still looks finished, which is exactly how this
+project shipped a header pointing at a 404); the candidate-coverage notice is present and, when pairs
+were compared, states how they were judged; a completed run that reported nothing says so in words;
+the prototype warning sits next to the controls; and no footer marker appears in the rendered text or
+in the DOM that produced it (the same marker list `make no-footer` uses). Screenshots and a
+machine-readable record are written to
 [`docs/demo/screenshots/`](docs/demo/screenshots) and
 [`track_2b/data/evaluation/UI_RENDER.json`](track_2b/data/evaluation/UI_RENDER.json).
 
-A full run through the interface on 2026-10-12 took **83.92 s**, made **56 provider calls** (132,521
-tokens, 336.2 s accumulated latency, 0 failed), and the panel then read: 33 validated claims, 11 pairs
-sent to Apertus, "11 compared pair(s) were judged: 10 potential conflict, 1 consistent". The delivered
-record is a repeat of that check against the run the app had already stored — the API answers a repeat
-of the same document set from its own record, so that repeat's round trip is 0.51 s while its usage
-summary is still the run's own. The live run is the one whose numbers are quoted here.
+A full run through the interface on 2026-10-12 took **95.21 s**, made **14 provider calls** (32,004
+tokens, 94.6 s accumulated latency, 0 failed), and the panel then read: 28 validated claims, 11 pairs
+sent to Apertus, "11 compared pair(s) were judged: 10 potential conflict, 1 consistent". That live run
+is the one the delivered record and the current screenshots come from. An earlier check of the same
+document set took 83.92 s and 56 calls, and a *repeat* of a document set the app has already analysed
+is answered from its own stored run instead of the provider — which is why a repeat's round trip can
+be under a second while its usage summary is still the stored run's own.
 
 One finding worth passing on to anyone automating this app: lightpanda's HTTP timeouts default to
 15 s for a transfer and 8 s to connect. The analysis endpoint is synchronous and sends nothing for

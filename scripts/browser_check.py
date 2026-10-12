@@ -50,6 +50,7 @@ import sys
 import time
 from pathlib import Path
 from typing import Any
+from urllib.parse import urljoin
 
 import httpx
 import websockets
@@ -127,6 +128,17 @@ _STATE_JS = """
     }
     return out;
   }
+  function brandMark() {
+    var img = document.querySelector('img.brand-mark');
+    if (!img) return { present: false };
+    return {
+      present: true,
+      src: img.currentSrc || img.src || img.getAttribute('src') || '',
+      complete: !!img.complete,
+      natural_width: typeof img.naturalWidth === 'number' ? img.naturalWidth : null,
+      natural_height: typeof img.naturalHeight === 'number' ? img.naturalHeight : null
+    };
+  }
   function documentNames() {
     var out = [];
     var nodes = document.querySelectorAll('.document-list .document-name');
@@ -146,6 +158,7 @@ _STATE_JS = """
     muted: mutedLines(),
     buttons: buttonLabels(),
     documents: documentNames(),
+    logo: brandMark(),
     text: text
   });
 })()
@@ -509,6 +522,8 @@ async def run(args: argparse.Namespace, bucket: dict) -> dict:
 
             title = await evaluate(cdp, session, "document.title")
             assert_permanent_contract(state, title)
+            evidence["logo"] = check_logo(state, args.base_url)
+            note(f"header mark served: {evidence['logo']['src']}")
             evidence["documents"] = state["documents"]
             evidence["settings"] = grid_with(state, "Provider reachability")
             evidence["usage"] = grid_with(state, "Provider calls")
@@ -685,6 +700,49 @@ async def drive_analysis(
     if state["failures"]:
         result["recorded_failures"] = state["failures"]
     return result
+
+
+def check_logo(state: dict, base_url: str, fetch: Any = None) -> dict:
+    """The header mark must be an image URL the server actually serves.
+
+    A broken image is silent on a page: the layout keeps the box, the header looks
+    finished, and nothing is reported. The dashboard shipped exactly that — the
+    build is mounted at /app while the component asked for /sovra-logo.png, so the
+    header pointed at a 404. This check fetches the URL the page itself resolved.
+    """
+    mark = state.get("logo") or {}
+    if not mark.get("present"):
+        raise CheckFailed("the header has no brand mark element at all")
+    src = mark.get("src") or ""
+    if not src:
+        raise CheckFailed("the brand mark has no resolved image URL")
+    url = src if src.startswith("http") else urljoin(base_url, src)
+    fetch = fetch or (lambda target: httpx.get(target, timeout=10.0))
+    try:
+        response = fetch(url)
+    except Exception as caught:
+        raise CheckFailed(f"the brand mark URL {src} could not be fetched: {caught}") from None
+    content_type = response.headers.get("content-type", "")
+    if response.status_code != 200 or not content_type.startswith("image/"):
+        raise CheckFailed(
+            f"the header asks for {src}, which the server answers with HTTP "
+            f"{response.status_code} {content_type or '(no content type)'}"
+        )
+    width = mark.get("natural_width")
+    return {
+        "src": src,
+        "status": response.status_code,
+        "content_type": content_type,
+        "bytes": len(response.content),
+        # Recorded, never asserted: this browser answers 0 for every image's
+        # naturalWidth because its layout metrics are stubs, so a non-zero value
+        # here would be the surprise, not a pass.
+        "decoded_width_reported": width,
+        "assertion": (
+            "the URL the page resolved for the header mark is served as an image "
+            "(HTTP status and content type); decode metrics are not usable in this browser"
+        ),
+    }
 
 
 def grid_with(state: dict, label: str) -> dict:

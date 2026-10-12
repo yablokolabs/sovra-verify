@@ -1,5 +1,10 @@
 import { defineSegment } from 'videowright';
 import { mountSceneFrame, settle } from '../../components/scene-frame/index';
+// The mark is imported, not referenced by URL. The render and dev servers serve
+// the videowright entry from the package root, so a root-absolute path into this
+// project (e.g. /brand/sovra-logo.png) resolves against the package and 404s.
+// Importing it lets Vite serve the project file itself.
+import logoUrl from '../../assets/brand/sovra-logo.png';
 
 let host: HTMLElement | null = null;
 
@@ -22,7 +27,7 @@ export default defineSegment({
 
         <div data-ref="mark" style="display:flex; align-items:center; gap:40px; opacity:0;">
           <img
-            src="/brand/sovra-logo.png"
+            src="${logoUrl}"
             alt="Sovra Verify"
             style="height:112px; width:auto; display:block;"
           />

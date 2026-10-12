@@ -431,6 +431,83 @@ Story/tag claim changes: story gained the browser-verification paragraphs and th
 One exact next action: commit and push the browser check, its tests, the screenshots and the docs.
 ```
 
+## Checkpoint M6-2 — the delivered video is re-rendered: the mark paints and the narration is not clipped
+
+```
+Timestamp / checkpoint ID:   2026-10-12 20:20 IST / M6-2
+Milestone / branch / commit: M6 / main / pending
+Actual implemented behavior:
+  (a) the demo video's opening scene imports its mark instead of pointing at a URL. The render and dev
+      servers root themselves in the videowright package and reach this project through an alias, so
+      `/brand/sovra-logo.png` resolved against the package and 404'd, leaving an empty box in a scene
+      that otherwise looks finished. The asset moved from `videos/public/brand/` (a directory the
+      server never served) to `videos/assets/brand/`, `segments/sovra-problem/index.ts` imports it,
+      and `videos/env.d.ts` declares the module type. `videos/public/` no longer exists.
+  (b) the audio overlay no longer stops short of the narration. The renderer uses a segment's LAST
+      advance as that segment's whole duration, but the overlay ended every scene 0.2 s before the
+      next narration section began, so the seven values summed to 116.60 s against 117.432 s of audio
+      and ffmpeg's `-apad -shortest` truncated the closing words of the last sentence. Each span now
+      runs to the next section's first word, and the last runs to the end of the file. This also
+      removes up to 1.2 s of accumulated drift between picture and voice.
+  (c) the dashboard's header mark: `track_2b/frontend/src/shared/Logo.tsx` builds the URL from Vite's
+      base (`/app/`) instead of writing `/sovra-logo.png`, because the backend mounts the build at
+      /app and a root-absolute URL asks the server for a file it does not serve. The browser check
+      now asserts the URL the page resolved is served as an image, and `check_logo` has unit tests
+      for the 404, the missing element and the wrong-content-type cases.
+Command / exit code / result:
+  npx tsc --noEmit (videos)                -> EXIT 0
+  npx videowright render sovra_demo        -> EXIT 0, "timing source: audio_track",
+      total frames 7048 (117.5 s)
+  ffprobe docs/demo/sovra-verify-demo.mp4  -> duration 117.466667 s, 7048 frames, 1920x1080 @ 60 fps,
+      aac audio 117.461 s, 7,201,695 bytes; the file this replaces was 116.633 s, i.e. 0.799 s of
+      narration cut. Narration source file: 117.432 s.
+  pixel check, frame at t=4.0 s        -> new: 3,062 navy and 1,592 teal pixels inside the mark box
+      (crop 364x112 at 128,200), mean 215.6, stdev 58.6 | old delivered: 0 navy pixels, mean 233.7,
+      stdev 24.7 — the box was empty and now carries the lockup's own colours
+  audio tail, last 4 s mean volume      -> new -16.6 dB, source track.mp3 -16.6 dB (identical),
+      old delivered -16.0 dB: the new cut carries the end of the narration, the old one did not
+  scene-boundary arithmetic (60 fps)     -> measured from the rendered schedule and compared with
+      section_starts.json: +0.007, +0.009, +0.010, +0.016, +0.020, +0.028 s after each narration
+      section starts, never before, total 117.467 s covering 117.432 s of narration
+  npm run build (frontend)               -> EXIT 0, 174.03 kB js, 7.63 kB css; the built bundle now
+      contains src:"/app/sovra-logo.png" (the previous build asked for "/sovra-logo.png")
+  make ui-check-full (live run)          -> EXIT 0, PASS
+      header mark served: http://127.0.0.1:8098/app/sovra-logo.png -> 200 image/png, 71,892 bytes
+      round trip 95.21 s; 14 provider calls, 32,004 tokens, 94.6 s accumulated latency, 0 failed
+      run summary: complete, Apertus comparison, prompt sovra-prompts-4, 28 validated claims, 11 pairs
+      coverage on screen: 11 compared pair(s) were judged: 10 potential conflict, 1 consistent
+      footer scan: no marker in 10,964 rendered characters or 24,567 DOM characters
+  Chromium decode check (ad hoc, Playwright from videos/node_modules)
+      -> the header mark is present, complete, naturalWidth 1952, naturalHeight 600, rendered box
+         44x44; drawn into a canvas it yields 99,456 navy pixels of 1,171,200 — the mark really paints
+         in a browser that decodes images, which lightpanda's capture does not
+  make test                             -> EXIT 0, 265 passed, 1 skipped (12 of them are
+      track_2b/tests/unit/test_browser_check.py, which cover the mark assertion without a browser)
+  make no-footer                        -> EXIT 0, PASS (incl. the live-DOM scan); make audit -> EXIT 0,
+      154 publishable files
+Model / provider / mode / usage:
+  cscs / swiss-ai/Apertus-v1.5-70B / claims+compare through the interface
+  spend: one live interface run, 14 calls / 32,004 tokens / 94.6 s, 0 failed. The check was expected to
+  be answered from the app's stored run (the previous record shows a 0.51 s repeat) and was not, so the
+  numbers above are a real run and the delivered UI_RENDER.json is that run's own record, not a repeat.
+Blocker: location = videos/segments/sovra-problem/index.ts and videos/videos/sovra_demo/audio/tracks/v1/track.ts
+  → cause 1 = a root-absolute asset URL is resolved by whichever server renders the page, and this
+    projector's server is not rooted in the project; the path 404'd and the <img> stayed empty, with no
+    error anywhere in the render log.
+  → cause 2 = the timing overlay assumed a scene's duration was independent of its last advance; the
+    renderer's `buildFrameSchedule` advances the clock by exactly that last value, so six scenes each
+    ended 0.2 s early and the drift accumulated to 1.2 s while the picture ended 0.83 s before the audio.
+  → fix = the mark is imported so the bundler serves the project's own file; the last advance of each
+    overlay entry is that scene's full narration span. Both are verified against the rendered MP4
+    (pixels and audio level) rather than against the source that produced it.
+No-footer inspection: PASS over source, the built bundle, every served route, all report PDF pages, every
+  generated export and the live DOM; the video was re-checked for a closing card or branding strip — the
+  final scene still ends on the deployment limitation, and the mark still appears once, at the start
+Story/tag claim changes: "Challenges" gained the two render defects and their causes, the test count reads
+  265, and the README's interface section now quotes the delivered run and the mark assertion; tags unchanged
+One exact next action: commit and push the video, the app fix, the refreshed evidence and these docs.
+```
+
 ## Checkpoint template
 
 ```text

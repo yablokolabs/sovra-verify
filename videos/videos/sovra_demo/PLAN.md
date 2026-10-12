@@ -55,10 +55,15 @@
 
 ## Timing
 
-`advances` are segment-relative seconds. Each array's last entry is the final
-press that leaves the segment.
+`advances` are segment-relative seconds, and the renderer uses the **last**
+entry of a segment's array as that segment's whole duration: it walks the
+schedule frame by frame and advances its clock by that value before the next
+segment mounts.
 
-| Segment | Advances | Scene length |
+Two layers are involved. The `advances` written in each `segments/<id>/index.ts`
+are the schedule the scenes were authored against, before a voice existed:
+
+| Segment | Declared advances | Scene length |
 |---|---|---|
 | sovra-problem | [7.5, 15.0] | 15 s |
 | sovra-corpus | [4.5, 9.0, 13.5, 19.0] | 19 s |
@@ -73,6 +78,27 @@ Script word count 304. At the reference pace of 150 words per minute
 (2.5 words per second) that is 121.6 seconds of narration, which matches the
 122 second scene schedule to within half a second. See
 `voiceover_script/script.md` for the per-segment count.
+
+That 122 s schedule is a plan, not the delivered timing. The recorded
+narration came in at 117.432 s, so `audio/tracks/v1/track.ts` overlays the
+alignment-derived schedule on top of the declared advances, and that is what
+the render uses:
+
+| Segment | Rendered advances | Narration span |
+|---|---|---|
+| sovra-problem | [5.712, 13.56] | 0.0 – 13.56 s |
+| sovra-corpus | [3.816, 8.15, 11.448, 15.464] | 13.56 – 29.024 s |
+| sovra-run | [6.133, 12.266, 18.599] | 29.024 – 47.623 s |
+| sovra-finding | [4.366, 10.508, 15.744] | 47.623 – 63.367 s |
+| sovra-negative | [7.104, 13.804, 21.513] | 63.367 – 84.88 s |
+| sovra-review-export | [5.689, 12.609] | 84.88 – 97.489 s |
+| sovra-results | [11.784, 19.943] | 97.489 – 117.432 s |
+| **Total** | | **117.432 s** |
+
+Each span runs to the next section's first word, and the last runs to the end
+of the file, so the seven durations sum to exactly the narration length and no
+spoken word falls past the picture. At 60 fps the per-segment frame rounding
+puts each scene boundary within 30 ms of its section start and none before it.
 
 `waitForNext()` is placed at every point where the narration moves to a new
 subject, so re-recording the voice only changes timing data and never requires
@@ -157,6 +183,27 @@ Anything not on this list is not stated in the video.
 - Timeline: 7 segments, style `editorial-mono`, fade between scenes.
 - Voiceover: drafted to the official two-minute script shape, 304 words,
   estimated 121.6 s at 150 words per minute against a 122 s scene schedule.
-- Logo: `/brand/sovra-logo.png` on `sovra-problem` only. No closing card.
+- Logo: the mark on `sovra-problem` only. No closing card.
 - Deliberate deviation logged under Style: the accent marks two values in
   `sovra-finding`, because they are the single point of that scene.
+
+### 2026-10-12 — Render defects found and fixed
+
+Two defects were visible in the first rendered MP4 and are fixed here.
+
+- **The mark never appeared.** `sovra-problem` pointed at `/brand/sovra-logo.png`.
+  The dev and render servers root themselves in the videowright package and serve
+  this project through an alias, so a root-absolute path into the project resolved
+  against the package and 404'd; the `<img>` rendered as an empty box. The asset now
+  lives in `assets/brand/sovra-logo.png` and the segment imports it, so Vite serves
+  the project's own file. `videos/public/` no longer exists.
+- **The picture stopped 0.83 s before the narration did.** The overlay in
+  `track.ts` ended each segment 0.2 s before the next section began, on the
+  assumption that a segment's duration was independent of its last advance. It is
+  not: the renderer takes the last advance as the whole segment duration, so the
+  seven values summed to 116.60 s against 117.432 s of audio and ffmpeg's
+  `-shortest` clipped the closing words of the last sentence. Each span now runs to
+  the next section's first word (and to the end of the file for the last segment),
+  which also removes up to 1.2 s of accumulated drift between picture and voice.
+  Re-rendered length and the audit of the delivered MP4 are recorded in
+  `docs/PROGRESS.md`.
