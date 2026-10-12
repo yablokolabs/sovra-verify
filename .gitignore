@@ -21,6 +21,8 @@ __pycache__/
 node_modules/
 track_2b/frontend/dist/
 videos/dist/
+# Render workspace: intermediate MP4s. The delivered cut is docs/demo/sovra-verify-demo.mp4.
+videos/out/
 
 # ---- the packaged submission archive is a build artifact, not source ----
 # Rebuild it with scripts/package_submission.py, which audits it as it writes.

@@ -1,3 +1,4 @@
+import '../../styles/editorial-mono/fonts.css';
 import '../../styles/editorial-mono/tokens.css';
 import type { Timeline } from 'videowright';
 import defaultAudioTrack from './audio/tracks/v1/track';

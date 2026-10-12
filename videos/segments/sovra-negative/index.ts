@@ -11,7 +11,7 @@ export default defineSegment({
 	id: 'sovra-negative',
 	advances: [5.0, 11.0, 20.0],
 	voiceover:
-		'Two of the pairs are not conflicts. The expedited freight clause sets a 10 day period as a stated exception, and the amendment changes payment to 45 days, effective the first of May 2026. Sovra Verify flags potential inconsistencies for a human reviewer. It does not decide which document wins.',
+		'Two pairs are not conflicts. The expedited freight clause sets a 10 day period as a stated exception, and the amendment changes payment to 45 days, effective 1 May 2026. Sovra Verify flags potential inconsistencies for a human. It does not decide which document wins.',
 	notes: 'Negative cases: valid exception and date change. No legal conclusion.',
 
 	mount(el) {
@@ -24,7 +24,7 @@ export default defineSegment({
         </div>
 
         <div data-ref="cardA" style="
-          margin-top:80px;
+          margin-top:52px;
           border:var(--rule-weight) solid var(--color-border);
           background:var(--color-surface);
           padding:44px 48px;
@@ -41,7 +41,7 @@ export default defineSegment({
         </div>
 
         <div data-ref="cardB" style="
-          margin-top:40px;
+          margin-top:28px;
           border:var(--rule-weight) solid var(--color-border);
           background:var(--color-surface);
           padding:44px 48px;
@@ -58,7 +58,7 @@ export default defineSegment({
         </div>
 
         <div data-ref="boundary" style="
-          margin-top:64px;
+          margin-top:44px;
           font-family:var(--font-body);
           font-size:32px;
           line-height:1.45;

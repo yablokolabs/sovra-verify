@@ -27,7 +27,7 @@ endif
 
 .PHONY: help install install-frontend run run-local test evaluate smoke \
         verify-providers no-footer report-pdf report-deck audit docker-build docker-run e2e \
-        ui-check ui-check-full clean
+        ui-check ui-check-full video-check clean
 
 ## help: show every available target (default)
 help:
@@ -42,6 +42,7 @@ help:
 	@echo "  make smoke             real-provider smoke test (calls CSCS)"
 	@echo "  make verify-providers  verify /models and one real request per provider"
 	@echo "  make no-footer         fail if any footer or attribution marker exists"
+	@echo "  make video-check       check the demo video: narration timing, audio, frame layout"
 	@echo "  make ui-check          render the app in lightpanda and check what it shows"
 	@echo "  make ui-check-full     as above, driving a real analysis through the interface"
 	@echo "  make report-pdf        build track_2b/technical_report.pdf and check it"
@@ -80,6 +81,10 @@ run-local:
 ## test: run the backend test suite
 test:
 	@cd "$(REPO_ROOT)" && PYTHONPATH="$(BACKEND)" "$(RUN_PYTHON)" -m pytest track_2b/tests -q
+
+## video-check: check the demo video against the recorded narration (timing, audio, layout)
+video-check:
+	@cd "$(REPO_ROOT)/videos" && npm run check
 
 ## ui-check: render the interface in lightpanda and check the sentences it shows (no inference)
 ui-check:

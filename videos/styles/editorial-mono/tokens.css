@@ -13,10 +13,14 @@
 	--color-border: #d9d3c7; /* hairline rule, very subtle */
 	--color-surface: #ebe7dd; /* slightly darker paper for cards */
 
-	/* Typography */
+	/* Typography. Loaded by styles/editorial-mono/fonts.css, which imports the
+	   three families from the project's dependency tree (see that file for the
+	   licences). The `Variable` names are the ones the installed packages
+	   declare; the plain names follow so a machine with the static families
+	   installed still resolves to a known face rather than the fallback. */
 	--font-display: "Instrument Serif", "Times New Roman", serif;
-	--font-body: "Geist", "Helvetica Neue", system-ui, sans-serif;
-	--font-mono: "JetBrains Mono", ui-monospace, monospace;
+	--font-body: "Geist Variable", "Geist", "Helvetica Neue", system-ui, sans-serif;
+	--font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
 
 	/* Spacing (px on 1920×1080 canvas) */
 	--space-sm: 16px;

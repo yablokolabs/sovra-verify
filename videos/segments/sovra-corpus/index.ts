@@ -54,7 +54,7 @@ export default defineSegment({
 	id: 'sovra-corpus',
 	advances: [4.5, 9.0, 13.5, 19.0],
 	voiceover:
-		'Sovra Verify starts from a corpus. Four synthetic documents go in: a master supply agreement, an accounts payable policy, an invoice, and an amendment. Each file is hashed, and its text is extracted into canonical passages with page and character offsets. Scanned pages are refused, not guessed at.',
+		'Four synthetic documents go in: a master supply agreement, an accounts payable policy, an invoice, and an amendment. Each file is hashed, and its text becomes canonical passages with page and character offsets.',
 	notes: 'Document grid with hash and extraction metadata.',
 
 	mount(el) {
@@ -78,7 +78,7 @@ export default defineSegment({
           font-size:34px;
           line-height:1.4;
           color:var(--color-muted);
-          margin-top:48px;
+          margin-top:40px;
           opacity:0;
         ">Every upload is stored under a random internal name. The supplied filename is never used as a path.</div>
       </div>

@@ -652,6 +652,112 @@ Recovery note: the prose edition is unchanged by this work — `make report-pdf`
   shared renderer gained its font argument.
 ```
 
+## Checkpoint M6-5 — the delivered video audited against its own artifacts: a verdict that never showed, fonts that never loaded, three scenes past the rule
+
+```
+Timestamp / checkpoint ID:   2026-10-12 22:00 IST / M6-5
+Milestone / branch / commit: M6 / main / pending
+Actual implemented behavior:
+  (a) the reveal times are derived, not typed. `videos/scripts/derive-advances.mjs` reads the provider
+      word alignment, the beat map (`videos/videos/sovra_demo/beat_map.json`, which
+      sentence opens which reveal) and the segment sources, and writes the perSegment arrays in
+      `audio/tracks/v1/track.ts` and the voiceover module, the two script files, and the rendered-timing
+      table in PLAN.md — the table was hand-copied once, which is how it came to describe a schedule the
+      film no longer used. It counts each scene's `waitForNext()` calls
+      and refuses to write an array that does not have one entry per reveal plus one for the span. This
+      is the defect: `sovra-finding` has three reveals and had three entries, so its authored verdict
+      panel had no moment to fire and the scene ended on the second reveal.
+  (b) `sovra-results` gained a beat of its own. Its single beat had been placed by an even-share
+      heuristic, so the figures appeared 11.78 s into a 19.94 s scene while the voice was already on the
+      limitation, and the closing card followed 2 s later. Figures now at 0.5 s, card at 12.17 s.
+  (c) the brand fonts load. `styles/editorial-mono/fonts.css` imports Instrument Serif, Geist and
+      JetBrains Mono from `@fontsource` packages installed in `videos/node_modules`, and `tokens.css`
+      names the two variable families the packages declare. Nothing loaded them before: every scene laid
+      out in Times/Helvetica, the corpus scene 47 px taller than with the real faces.
+  (d) the three overflowing scenes were tightened, without cutting copy: corpus footnote gap 48->40 px,
+      negative gaps 80->52 / 40->28 / 64->44 px, results grid 72->64 px and its closing card 80->64 px
+      with padding 44 -> 36 px. Worst remaining clearance 5 px above the bottom rule at y=984.
+  (e) the declared script now describes the take that was recorded. The segment `voiceover` fields,
+      `voiceover_script/script.md` and the provider script all held the longer 138 s draft (329 characters
+      of divergence); all three are generated from the alignment by the same script and checked.
+  (f) `scripts/patch-videowright.sh` now recreates three missing vendor modules, not one. The dev server
+      could not boot at all (HTTP 500 on its own video view) for the same packaging reason the render
+      needed patching; it is verified by scanning the package for unresolved relative imports.
+  (g) two render-time constraints are now encoded in the derivation, both found by rendering: an advance
+      must be positive (the renderer rejects 0 and aborts), and a segment's first reveal must clear the
+      400 ms incoming crossfade, else the driver reads the outgoing segment as current and aborts.
+  (h) the delivered cut is re-rendered and audited on its own pixels and audio.
+Command / exit code / result:
+  node scripts/derive-advances.mjs --check  -> EXIT 1 before the fix (committed track.ts carried
+      'sovra-finding': [4.366, 10.508, 15.744] against a scene with 3 reveals), EXIT 0 after:
+      7 segments, 117.432 s of picture, every array one per reveal plus span
+  node scripts/check-audio.mjs             -> EXIT 1 before (sovra-problem declared the 138 s wording:
+      "at char 91: recorded 'a model answer that cannot show its source is not ev' vs declared 'a language
+      model answer that cannot show where it ca'"), EXIT 0 after, all 21 checks pass: track 117.432 s =
+      length_s, take 117.447 s = audio_meta 117.4 s, spans sum 117.432 s = file, alignment covers 1,522
+      characters = billed, onset at 0.000 s, 0.032 s of tail after the last character, section_starts.json
+      matches the alignment on all 7 boundaries, 7/7 segments declare the recorded paragraph, the provider
+      script is that text, measured loudness -16.67 LUFS against the plan's -16
+  table drift check                        -> with one row of PLAN.md's rendered-timing table altered,
+      `--check` exits 1 and prints the line diff ("
+      committed: | sovra-corpus | [0.5, 4.075, 15.464] "); `--write` restores it and `--check` exits 0
+  node scripts/check-frames.mjs            -> EXIT 0 after: 21 measurements (7 scenes x every beat) in the
+      project's own dev player, worst clearance 5 px (corpus ends 979 px, the rule is at 984), fonts in use
+      for all three families. EXIT 1 with the font import removed, which is how the check was shown to
+      work: 7 problems, "FONTS MISSING: Instrument Serif (brand 1159.95px vs fallback 1159.95px)", corpus
+      +42 px, negative +76 px. Baselines measured before the layout fix, with the real fonts loaded:
+      corpus +3 px, negative +43 px, results +17 px
+  npx tsc --noEmit (videos)                -> EXIT 0
+  npx videowright render sovra_demo --output out/sovra-verify-demo.mp4 -> EXIT 0, 7048 frames (117.5 s).
+      Two aborted attempts came first and are the reason (g) exists: "Audio track timing validation failed:
+      Timing for segment \"sovra-corpus\": advances[0] must be a positive finite number (got 0)" and
+      "Segment \"sovra-corpus\" transitioned at advance index 0 but advances array has more entries"
+  ffprobe docs/demo/sovra-verify-demo.mp4  -> 117.466667 s, 7048 frames, 1920x1080 @ 60 fps, h264 High
+      217.5 kbps, aac LC 201 kbps, 6,341,332 bytes. The cut it replaces has identical stream parameters
+      (276 kbps video, same audio) and the same duration, so nothing about the encode changed
+  export audit (PIL over frames pulled from the delivered MP4)
+      below the bottom rule at each scene's full reveal  -> 0 content pixels in all 7 scenes
+      sovra-finding band y=700-980    -> 0 px at the second reveal (52.31 s), 5,112 px at the third
+          (58.64 s): the verdict panel now appears
+      sovra-results at 99.49 s        -> figures drawn (3,554 px), closing card absent (0 px)
+      sovra-results at 110.26 s       -> closing card drawn (121,830 px), as the narration reaches it
+      audio tail, last 4 s mean volume -> export -16.6 dB, track.mp3 -16.6 dB: the narration reaches the end
+      117 one-second frames scanned for blank output -> minimum 346 of 32,400 sampled points on content
+          (t=1.5 s, the opening mark and headline), median 1,211; no frame is empty
+  make no-footer                           -> EXIT 0, PASS
+Model / provider / mode / usage:
+  none. No inference call and no credential read in this session; the work is timing derivation, font
+  loading, layout measurement and rendering.
+Blocker: location = videos/videos/sovra_demo/audio/tracks/v1/track.ts + videos/segments/sovra-finding/index.ts
+  → cause = a scene's advance array is maintained by hand in two files and its length is load-bearing
+    (one entry per `waitForNext()` plus one for the span). A short array breaks nothing: the render
+    succeeds, the scene shows, and the reveal with no entry is simply never drawn.
+  → fix = the array is generated from the alignment and the beat map, the reveal count is read from the
+    scene source, and `npm run check` compares the committed files with what the derivation produces.
+Blocker: location = videos/styles/editorial-mono/tokens.css + videos/videos/sovra_demo/timeline.ts
+  → cause = `tokens.css` named three families and nothing imported them. A missing font is invisible in
+    the source and silent at render time; it only shows up as wider metrics, which is how it made three
+    scenes overflow.
+  → fix = `fonts.css` loads them from the project's own dependency tree (no network fetch at render
+    time), and the layout check measures the rendered string in each family against a family nobody
+    declares, so a font that is merely named cannot pass.
+Blocker: location = videos/scripts/patch-videowright.sh
+  → cause = the published tarball omits three modules its own entry files import. The render symptom was
+    documented; the dev-server symptom (HTTP 500 on video_view.ts, no readiness flag) was not, and had
+    silently made the project's preview path unusable.
+  → fix = the patch script recreates all three re-exports, `npm install` runs it, and an import scan over
+    the package reports 0 unresolved relative imports.
+No-footer inspection: PASS (make no-footer, 78 files plus the built bundle). The video was re-checked for
+  a closing card, a sign-off and a branding strip: the final scene still ends on the deployment
+  limitation, the mark still appears once, and no footer sits in any frame
+Story/tag claim changes: the story's challenge section now carries the four silent defects, the vendor
+  patch that covers the dev server, and the audit numbers; tags unchanged at 23 of 25 — the font packages
+  are build dependencies of the video, and their licences are recorded in styles/editorial-mono/fonts.css
+One exact next action: put the proposed take in front of the owner for approval (audio_plan.md,
+  "Pending take — not recorded"): on approval, re-record alice-uk-v2, run
+  `node scripts/derive-advances.mjs --write` plus `npm run check`, and re-render.
+```
+
 ## Checkpoint template
 
 ```text
