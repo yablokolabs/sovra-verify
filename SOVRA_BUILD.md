@@ -9,7 +9,7 @@ MVP supports text-native PDF and UTF-8 TXT, one project with up to ten documents
 Python FastAPI backend, Pydantic validation, PyMuPDF extraction after license review, SQLite persistence, React/TypeScript frontend, Docker Compose, pytest and browser tests. Confirm maintained versions and upstream licensing before adopting packages; choose an alternative parser if license requirements do not fit. Store original document hashes, page text, chunk offsets, claims, comparisons, decisions and review history. No vector database is necessary for the initial corpus: lexical/entity candidate filtering plus bounded exhaustive comparison is simpler and easier to audit.
 
 ```text
-AGENTS.md / FREEBUFF_PROMPT.md / SOVRA_BUILD.md
+AGENTS.md / SOVRA_BUILD.md
 Makefile / compose.yaml / .env.example
 track_2b/                 # preserve official template layout
   technical_report.md

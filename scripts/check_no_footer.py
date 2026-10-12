@@ -64,7 +64,6 @@ ALLOWLIST_FILES: frozenset[str] = frozenset(
     {
         "AGENTS.md",
         "SOVRA_BUILD.md",
-        "FREEBUFF_PROMPT.md",
         "SESSION_CONTINUATION.md",
         "docs/BUILT_WITH.md",
         "docs/COMPETITION_NOTES.md",

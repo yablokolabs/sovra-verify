@@ -508,6 +508,41 @@ Story/tag claim changes: "Challenges" gained the two render defects and their ca
 One exact next action: commit and push the video, the app fix, the refreshed evidence and these docs.
 ```
 
+## Checkpoint M6-3 — the build prompt is removed from the repository
+
+```
+Timestamp / checkpoint ID:   2026-10-12 20:45 IST / M6-3
+Milestone / branch / commit: M6 / main / pending
+Actual implemented behavior: FREEBUFF_PROMPT.md is no longer part of the repository at the owner's
+  request. The file's operating rules are not lost by this: AGENTS.md carries the same directives
+  (credential handling, no footers anywhere, evidence and delivery rules) and stays. Three references
+  had to move with it so the tree and the checks stay consistent:
+    SOVRA_BUILD.md        the repository-layout block listed the prompt beside AGENTS.md and
+                          SOVRA_BUILD.md; it now lists the two files that remain
+    docs/KIT_MANIFEST.json  the digest record dropped the entry (and every remaining digest was
+                          recomputed, because SOVRA_BUILD.md itself changed)
+    scripts/check_no_footer.py  the doc allowlist dropped the entry, so the allowlist no longer names
+                          a file that is not in the tree
+Command / exit code / result:
+  git rm FREEBUFF_PROMPT.md             -> removed from the index and the working tree
+  grep -rn FREEBUFF_PROMPT              -> the only remaining mentions are in this record; no file,
+      check, manifest or document in the tree refers to it any more
+  digest check over docs/KIT_MANIFEST.json -> all 8 recorded hashes match the files on disk
+  make test -> EXIT 0, 265 passed, 1 skipped
+  make no-footer -> EXIT 0, PASS (the allowlist summary no longer names the removed file)
+  make audit -> EXIT 0, 153 publishable files (154 before the removal)
+  scripts/package_submission.py -> EXIT 0, 153 members, re-opened and audited; the archive no longer
+      contains the prompt and every member hash was compared against the working tree
+Model / provider / mode / usage: none (repository surgery and documentation only; no inference)
+Blocker: none
+No-footer inspection: PASS over source, the built bundle, every served route, all report PDF pages and
+  every generated export
+Story/tag claim changes: none; the story never named the prompt file
+One exact next action: none — the tree, the checks and the archive agree on the same 153 files.
+Recovery: the removed file is one command away from any clone —
+  git show 1e134ef:FREEBUFF_PROMPT.md > FREEBUFF_PROMPT.md
+```
+
 ## Checkpoint template
 
 ```text
