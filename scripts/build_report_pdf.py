@@ -143,8 +143,13 @@ def to_html(markdown_text: str, md_module) -> str:
     )
 
 
-def render(html_text: str, out_pdf: Path) -> None:
-    """Render HTML to PDF through Chromium. Raises RuntimeError on failure."""
+def render(html_text: str, out_pdf: Path, expect_fonts: tuple[str, ...] = ()) -> None:
+    """Render HTML to PDF through Chromium. Raises RuntimeError on failure.
+
+    ``expect_fonts`` names the font families the document needs. They are checked
+    in the rendered document, and a family that did not load fails the render
+    instead of quietly printing in a substitute face.
+    """
     node = shutil.which("node")
     if node is None:
         raise RuntimeError("node is not on PATH; the PDF renderer needs Chromium via Playwright")
@@ -159,8 +164,11 @@ def render(html_text: str, out_pdf: Path) -> None:
     with tempfile.TemporaryDirectory() as tmp:
         html_path = Path(tmp) / "report.html"
         html_path.write_text(html_text, encoding="utf-8")
+        argv = [node, str(RENDERER), str(html_path), str(out_pdf)]
+        if expect_fonts:
+            argv.append(",".join(expect_fonts))
         proc = subprocess.run(
-            [node, str(RENDERER), str(html_path), str(out_pdf)],
+            argv,
             cwd=str(REPO_ROOT),
             env=env,
             capture_output=True,

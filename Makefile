@@ -26,7 +26,7 @@ RUN_PYTHON := $(VENV_PYTHON)
 endif
 
 .PHONY: help install install-frontend run run-local test evaluate smoke \
-        verify-providers no-footer report-pdf audit docker-build docker-run e2e \
+        verify-providers no-footer report-pdf report-deck audit docker-build docker-run e2e \
         ui-check ui-check-full clean
 
 ## help: show every available target (default)
@@ -45,6 +45,7 @@ help:
 	@echo "  make ui-check          render the app in lightpanda and check what it shows"
 	@echo "  make ui-check-full     as above, driving a real analysis through the interface"
 	@echo "  make report-pdf        build track_2b/technical_report.pdf and check it"
+	@echo "  make report-deck       build the six-page print edition of the report"
 	@echo "  make audit             fail if a credential or forbidden file would ship"
 	@echo "  make e2e               full HTTP end-to-end run, then inspect generated output"
 	@echo "  make docker-build      build the container image"
@@ -113,6 +114,10 @@ no-footer:
 ## report-pdf: build the technical report PDF and verify its page budget and page edges
 report-pdf:
 	@cd "$(REPO_ROOT)" && "$(RUN_PYTHON)" scripts/build_report_pdf.py
+
+## report-deck: build the six-page print edition of the report and verify it
+report-deck:
+	@cd "$(REPO_ROOT)" && "$(RUN_PYTHON)" scripts/build_report_deck.py
 
 ## audit: fail if any credential value, key-shaped string or forbidden file is publishable
 audit:

@@ -9,6 +9,12 @@ Checked surfaces
 4. every served HTTP route  discovered from the OpenAPI schema
 5. rendered PDF pages       every ``*.pdf`` in the tree, by text position
 
+Rendered output is matched case-insensitively, our own source is not. The
+application neither writes nor exports a PDF — it only reads them — so every PDF
+in this repository is text we generated, and a marker there is always a failure.
+Source files are the one place the rule is *written down*, so they are matched
+case-sensitively and the phrases that describe the rule do not trip it.
+
 Surface 5 is a page-geometry check, not a text search. A running footer or a
 bottom page-number block is text drawn *below the body column*, so each PDF page
 is measured and any fragment in the bottom band is a failure. This needs
@@ -111,6 +117,15 @@ SCAN_DIRS: tuple[str, ...] = (
 
 SCAN_ROOT_FILES: tuple[str, ...] = ("README.md", "Makefile", "compose.yaml", ".env.example")
 
+#: Authored files that sit outside ``SCAN_DIRS`` and are still rendered surfaces.
+#: ``track_2b`` itself is not a scan directory (it holds binaries, source documents
+#: and test fixtures), but the report sources are printed to PDF and read by a
+#: judge, so a footer written into them would reach a generated document.
+SCAN_EXTRA_FILES: tuple[str, ...] = (
+    "track_2b/technical_report.md",
+    "track_2b/technical_report_deck.html",
+)
+
 SKIP_DIR_NAMES: frozenset[str] = frozenset(
     {
         ".git",
@@ -202,7 +217,7 @@ def iter_files(root: Path) -> Iterator[Path]:
             except OSError:
                 continue
             yield path
-    for name in SCAN_ROOT_FILES:
+    for name in SCAN_ROOT_FILES + SCAN_EXTRA_FILES:
         path = root / name
         if path.is_file() and not any(part in SKIP_DIR_NAMES for part in path.parts):
             yield path
@@ -358,12 +373,13 @@ PAGE_NUMBER_PATTERNS: tuple[str, ...] = (
 )
 
 
-def scan_pdfs(root: Path) -> tuple[list[Finding], list[str]]:
+def scan_pdfs(root: Path, *, case_insensitive: bool = True) -> tuple[list[Finding], list[str]]:
     """Measure every PDF in the tree for text placed below the body column.
 
     Returns ``(findings, notes)``. Findings are reported with the marker column
     set to the offending y position so the message points at the page geometry
-    that failed, not at a character offset in a binary file.
+    that failed, not at a character offset in a binary file. The page text is
+    matched case-insensitively by default: see the module docstring.
     """
     pdfs = sorted(
         path
@@ -402,7 +418,13 @@ def scan_pdfs(root: Path) -> tuple[list[Finding], list[str]]:
             minima[number] = min(y, minima.get(number, y))
 
         for number, fragment in enumerate(pages, start=1):
-            findings.extend(scan_text(fragment, f"PDF {relative} page {number}"))
+            findings.extend(
+                scan_text(
+                    fragment,
+                    f"PDF {relative} page {number}",
+                    case_insensitive=case_insensitive,
+                )
+            )
 
         for number, y, fragment in page_hits:
             is_number = any(re.fullmatch(pattern, fragment, re.IGNORECASE) for pattern in PAGE_NUMBER_PATTERNS)

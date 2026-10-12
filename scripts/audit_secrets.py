@@ -81,6 +81,13 @@ EXCLUDED_DIRS: frozenset[str] = frozenset(
         # any machine that runs the tool, it is not part of the submission, and it
         # had already slipped into one built archive before this entry existed.
         ".serena",
+        # Isolated git worktrees. A worktree is a second checkout of this same
+        # repository, so it holds a complete copy of the tree — one worktree added
+        # 149 duplicate members and 22 MiB to a built archive before this entry
+        # existed, and nothing objected because a duplicate of a clean file is
+        # still a clean file. Git ignores the directory; this list is what the
+        # packaging walk actually reads.
+        ".worktrees",
     }
 )
 

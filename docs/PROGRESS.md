@@ -549,6 +549,101 @@ Recovery: the removed file is one command away from any clone —
   git show 1e134ef:FREEBUFF_PROMPT.md > FREEBUFF_PROMPT.md
 ```
 
+## Checkpoint M6-4 — the print edition of the report, and the font check that nearly lied
+
+```
+Timestamp / checkpoint ID:   2026-10-13 01:57 IST / M6-4
+Milestone / branch / commit: M6 / main / pending
+Actual implemented behavior: a second edition of the technical report now exists beside the prose one:
+  track_2b/technical_report_deck.html -> track_2b/technical_report_deck.pdf, six A4 pages, authored with
+  the Frontend Slides skill's "Swiss Modern" preset (Archivo 800 display + Nunito body, pure white and
+  black with a single #ff3300 accent, visible column grid, asymmetric geometry). Two deliberate
+  deviations from that skill's defaults: its fixed 1920x1080 stage is not used, because this artifact is
+  printed and read and the submission caps the report at six pages, and pages flow rather than clip, so
+  an overrunning page becomes a seventh page the builder refuses instead of a page that quietly loses
+  its last paragraph. Only the page's own section label repeats from page to page; there is no page
+  number, running title, document name, attribution or footer on any page.
+  scripts/build_report_deck.py builds it and measures the produced PDF, not the renderer's settings:
+  page count, a selectable text layer on every page, no fragment below the 51pt body floor, the shared
+  footer/attribution marker list applied to every fragment, and the fonts. Archivo and Nunito are
+  embedded in the HTML as base64 woff2 (latin subset, SIL OFL 1.1, recorded in
+  track_2b/REPORT_FONTS_NOTICE.md) so the render needs no network at all.
+Command / exit code / result:
+  make report-deck -> EXIT 0
+      rendered track_2b/technical_report_deck.pdf (467 KiB)
+      PASS page count: 6 of 6
+      PASS text layer on every page (words per page: 400, 403, 579, 458, 422, 463)
+      PASS every section closes on its own page (6 sections, closing words found on each)
+      PASS no text below the body column (lowest fragment per page: p1 172pt, p2 111pt, p3 94pt,
+           p4 72pt, p5 140pt, p6 178pt; the floor is 51pt)
+      PASS no footer, attribution or copyright marker on any page
+      PASS no substitute face in the PDF; 55 embedded face(s) drawn as unnamed glyph programs
+           (the only named fonts are the three DejaVu Sans Mono faces inline code uses)
+  make report-pdf -> EXIT 0, unchanged: 4 body pages + a reference page, 0 fragments in the footer band
+      (the shared renderer change is backward compatible)
+  make no-footer -> EXIT 0, PASS: 78 files inspected, and both report PDFs measured page by page
+  page geometry, measured in Chromium under print media before the PDF was trusted (ad hoc, /tmp):
+      six .page sections, each exactly A4 wide (794px) with 0px horizontal overflow, and no element on
+      any page crosses the A4 bottom edge (0 elements past it on all six) — so no content is clipped or
+      hidden, which is what the flow layout promises rather than assumes
+  content-loss gate, negative test (ad hoc): with a page's last 40 words removed, the new
+      "every section closes on its own page" test flags exactly page 4; on the real artifact it passes
+  lower-case attribution, negative test (ad hoc, /tmp/lc_deck.html): a line reading "powered by a tool
+      vendor" placed inside a rendered page -> EXIT 1, "deck page 1:1: [attribution phrase] 'powered by'".
+      The rendered-output scans (both report PDFs and this builder's own page scan) are now matched
+      case-insensitively, because a rendered page is output and output should not be able to evade the
+      rule by spelling it in lower case. Our own source stays case-sensitive: it is the one place the
+      rule is written down, so the sentences that describe it would otherwise flag themselves.
+  font gate, negative tests (ad hoc, /tmp copies; no repository file was modified)
+      a required family the document never defines -> the render refuses rather than substitutes:
+          "not registered: NonexistentFace"
+      both @font-face URLs broken -> "failed to decode: Archivo, Nunito"
+      the same broken document rendered with the document-level check bypassed -> the PDF names six
+          substitute faces (AAAAAA+LiberationSans-Bold, ...) and contains 0 unnamed glyph programs, so
+          the PDF-side gate flags the substitution on its own
+  coverage gate, negative test (ad hoc, /tmp/nt): a closing footer element written into
+      track_2b/technical_report_deck.html -> EXIT 1, "2 marker occurrence(s) found", reported at
+      file:line with both the element and the attribution phrase named. The marker cannot be written
+      literally in this log either: that same run failed on this file's first draft, which spelled it
+      out, so the log now describes the element instead of quoting it.
+Model / provider / mode / usage: none (typesetting, checks and documentation; no inference)
+Blocker 3: location = the submission archive, then scripts/audit_secrets.py EXCLUDED_DIRS
+  → cause = this session's own git worktree (.worktrees/fix-demo-video-clipping, created earlier today)
+    sits inside the repository and holds a complete second checkout: 149 files, 22 MiB. The packaging
+    walk and the audit both walk the tree and apply that exclusion list rather than git's ignore rules,
+    so the archive silently grew from 154 to 303 members. Nothing objected because a duplicate of a
+    clean file is still a clean file — the same blind spot that let `.serena` into an earlier archive,
+    one directory over. The count printed on every run is what made it visible at all.
+  → fix = `.worktrees` added to EXCLUDED_DIRS with the reason, and main's `.gitignore` finally learned
+    `.worktrees/` (the earlier session had added that line inside the worktree, where it protected
+    nothing). Archive rebuilt: 154 members, 11414 KiB, no worktree member, re-audited after writing.
+Blocker 2: location = scripts/build_report_deck.py, the output path banner
+  → cause = `--output /tmp/x.pdf` crashed with a ValueError traceback instead of reporting anything,
+    because the progress line called Path.relative_to(REPO_ROOT) on a path outside the repository. The
+    run was a real check, not a passing one, and a traceback is not a result.
+  → fix = the banner falls back to the path as given when it is not inside the repository; the
+    negative test above then ran to a verdict (EXIT 1, marker named) instead of crashing.
+Blocker 1: location = scripts/build_report_deck.py, font_inventory()
+  → cause = the first version read font names out of pypdf's resolved-object table. Chromium writes each
+    font dictionary inline inside a page's /Resources instead, so that table holds no font object at
+    all: the check reported zero embedded faces and failed a PDF that was in fact typeset correctly. The
+    same blind spot would have reported "no fonts" on any document, so it could not have failed
+    honestly either — a check that cannot distinguish the good case from the bad one is not a check.
+  → fix = walk every page's /Resources, where the fonts actually live, and record subtype plus base name
+    per font; the substitution test above then detected the real fallback in the broken copy.
+No-footer inspection: PASS — the two report sources are now inside the static scan (SCAN_EXTRA_FILES),
+  both report PDFs are measured page by page, and the rendered-output marker match is case-insensitive;
+  nothing repeats at the bottom of any page and the only repeated element in the deck is each page's own
+  section label (no page number, running title, document name, attribution or footer on any page)
+Story/tag claim changes: `frontend-slides` added to docs/BUILT_WITH.md (23 of the allowed 25), described
+  as a local authoring skill whose 1920x1080 stage was explicitly not used; README now lists the deck
+  edition and the 265-test count it had drifted below
+One exact next action: commit and push the deck, the builder, the coverage change and these docs.
+Recovery note: the prose edition is unchanged by this work — `make report-pdf` still produces the same
+  five-page `track_2b/technical_report.pdf` (4 body pages + the reference page), verified after the
+  shared renderer gained its font argument.
+```
+
 ## Checkpoint template
 
 ```text

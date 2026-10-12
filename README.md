@@ -56,11 +56,12 @@ its provider, model, mode, latency, token usage and error class.
 ```bash
 make run          # documented entry point: Docker, app + API
 make run-local    # host process instead
-make test         # 260 unit, integration and end-to-end tests
+make test         # 265 unit, integration and end-to-end tests
 make evaluate     # frozen evaluation corpus against real inference
 make ui-check     # renders the app in a real browser and checks what the panel shows
 make ui-check-full # the same, driving a real analysis through the interface
-make no-footer    # footer audit over source, build output, PDF pages and every route
+make report-deck  # builds the six-page print edition of the report and checks it
+make no-footer    # footer audit over the report sources, both report PDFs, build output and every route
 make audit        # fails if a credential or a forbidden file could be published
 ```
 
@@ -219,15 +220,19 @@ videos/               videowright project for the demonstration video
 - [`docs/BUILT_WITH.md`](docs/BUILT_WITH.md) — the technologies actually used
 - [`track_2b/technical_report.md`](track_2b/technical_report.md) — the technical report, rendered to
   [`track_2b/technical_report.pdf`](track_2b/technical_report.pdf), four body pages plus references
+- [`track_2b/technical_report_deck.html`](track_2b/technical_report_deck.html) — the print edition of the
+  same report, six A4 pages in a Swiss Modern design system, rendered to
+  [`track_2b/technical_report_deck.pdf`](track_2b/technical_report_deck.pdf); both typefaces are embedded
+  in the file and their licences are recorded in [`track_2b/REPORT_FONTS_NOTICE.md`](track_2b/REPORT_FONTS_NOTICE.md)
 - [`track_2b/data/evaluation/PROOF.md`](track_2b/data/evaluation/PROOF.md) — the delivered run's evidence bundle
 
 ## No footer, anywhere
 
 No screen, export, report or PDF carries a footer, a copyright bar, an attribution strip, a
 "powered by" line or a closing signature. Safety and prototype information sits next to the controls
-it applies to. `make no-footer` scans the source, the built frontend, generated reports and exports,
-every served route and every page of the rendered report PDF, and fails the build if a footer marker
-appears. `make ui-check` applies the same marker list to a real browser render — the text a reader
+it applies to. `make no-footer` scans the source, the built frontend, generated reports and exports — the report
+sources themselves included — every served route and every page of both rendered report PDFs, and fails
+the build if a footer marker appears or if text is drawn below the body column of a page. `make ui-check` applies the same marker list to a real browser render — the text a reader
 sees and the DOM that produced it — so the rule is checked on a live screen and not only in files.
 Licensing and provenance live in dedicated files, not in a footer.
 
