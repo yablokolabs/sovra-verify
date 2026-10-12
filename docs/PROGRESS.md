@@ -11,8 +11,8 @@ citations, both as a host process and inside a fresh container. The demonstratio
 evaluation harness, technical report PDF, evidence bundle and submission archive exist and have
 been inspected.
 
-Still open at the time of writing: publication to a public repository, which requires explicit
-authorization and has not been done.
+A public repository was authorized and published: **https://github.com/yablokolabs/sovra-verify**.
+Nothing has been submitted to the hackathon portal, and no further external action has been taken.
 
 ## Milestones
 
@@ -21,7 +21,9 @@ authorization and has not been done.
 - [x] M2: dashboard, review and export, no-footer inspection.
 - [x] M3: evaluation harness, Docker packaging, provider verification, demonstration video.
 - [x] M4: technical report PDF, evidence bundle, provider re-verification, submission archive.
-- [ ] Publication to a public repository: **not done, not authorized.**
+- [x] Publication: public repository at `https://github.com/yablokolabs/sovra-verify`, authorized by the
+owner and verified public with 143 files and no credential or work file among them.
+- [ ] Submission to the hackathon portal: **not done.**
 
 ## Provider status
 
@@ -295,6 +297,35 @@ Blocker 3: location = scripts/audit_secrets.py is_excluded → cause = "original
 No-footer inspection: not applicable to this checkpoint; last full PASS at M3-3
 Story/tag claim changes: none yet; the numbers above replace the earlier provisional ones
 One exact next action: ask for publication authorization before any repository is created.
+```
+
+## Checkpoint M4-3 — public repository published
+
+```
+Timestamp / checkpoint ID:   2026-10-12 17:40 IST / M4-3
+Milestone / branch / commit: M4 / main / c604e4842e4f6376a8ae3c764cb8d3d9b6a69b51
+Actual implemented behavior: the audited tree was committed with no credential, then published
+after explicit authorization from the owner
+Command / exit code / result:
+  git init -b main; git add -A
+      staged 143 files; compared against the audit's publishable set -> identical,
+      no file staged that the audit excludes and none absent; .env.example carries variable
+      names only
+  git commit
+      message contains no footer, trailer, signature or attribution of any kind
+  gh repo create yablokolabs/sovra-verify --public --source=. --remote=origin --push
+      -> EXIT 0, https://github.com/yablokolabs/sovra-verify, main tracking origin/main
+  gh api repos/yablokolabs/sovra-verify/git/trees/main?recursive=1
+      -> 143 blobs, matching the publishable set exactly
+      -> no .env, virtualenv, node_modules, work directory, sqlite file, key file or log
+      -> technical_report.pdf, PROOF.json, docs/demo/sovra-verify-demo.mp4, Makefile,
+         track_2b/Dockerfile and compose.yaml all present
+Model / provider / mode / usage: none (packaging and publication only)
+Blocker: none
+No-footer inspection: PASS immediately before the commit (source, built output, every served route,
+  all 5 report PDF pages) and PASS over every generated export
+Story/tag claim changes: none
+One exact next action: submit to the hackathon portal when the owner says so; nothing is submitted yet.
 ```
 
 ## Checkpoint template
