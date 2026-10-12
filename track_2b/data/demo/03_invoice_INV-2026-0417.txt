@@ -1,0 +1,19 @@
+INVOICE
+
+Invoice number: INV-2026-0417
+Supplier: Nordwind Logistik AG
+Customer: Helvetia Praezision GmbH
+Invoice date: 2026-04-02
+Purchase order: PO-4471, governed by the Master Supply Agreement
+
+Line 1  Scheduled road freight, Zurich to Basel, March 2026    4,180.00 CHF
+Line 2  Fuel surcharge, March 2026                              296.50 CHF
+Line 3  Loading and handling, March 2026                        140.00 CHF
+
+Total amount due                                                4,616.50 CHF
+
+Payment terms: payable within 30 days of the invoice date, as stated in Clause
+7.2 of the Master Supply Agreement.
+
+Payment reference: INV-2026-0417 / PO-4471
+Currency: Swiss francs (CHF)

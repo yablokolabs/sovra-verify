@@ -1,0 +1,30 @@
+{
+  "sovra-problem": {
+    "char_start": 0,
+    "start_seconds": 0.0
+  },
+  "sovra-corpus": {
+    "char_start": 191,
+    "start_seconds": 13.56
+  },
+  "sovra-run": {
+    "char_start": 403,
+    "start_seconds": 29.024
+  },
+  "sovra-finding": {
+    "char_start": 600,
+    "start_seconds": 47.623
+  },
+  "sovra-negative": {
+    "char_start": 823,
+    "start_seconds": 63.367
+  },
+  "sovra-review-export": {
+    "char_start": 1092,
+    "start_seconds": 84.88
+  },
+  "sovra-results": {
+    "char_start": 1274,
+    "start_seconds": 97.489
+  }
+}

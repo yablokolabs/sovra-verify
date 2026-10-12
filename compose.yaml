@@ -1,0 +1,63 @@
+# Sovra Verify — container composition.
+#
+# Start with the credential-safe launcher:   scripts/launch.sh
+# or directly, after exporting your own credentials:   docker compose up
+#
+# Credentials are injected from the *host environment* only. There is no
+# env_file here on purpose: pointing one at a personal credential file would
+# pass every secret in that file into the container, and would make the
+# container state depend on a file that must never be shipped.
+#
+# Judges: supply your own CSCS credential, or set SOVRA_CSCS_BASE_URL to your
+# own Apertus endpoint. The developer's credential is not part of this project.
+
+name: sovra-verify
+
+services:
+  sovra:
+    build:
+      context: .
+      dockerfile: track_2b/Dockerfile
+    image: sovra-verify:local
+    init: true
+    environment:
+      # Required. Compose stops with this message when it is not set, rather
+      # than starting an instance that cannot reach the primary provider.
+      CSCS_INFERENCE_API_KEY: ${CSCS_INFERENCE_API_KEY:?CSCS_INFERENCE_API_KEY must be set in the host environment. Run scripts/launch.sh, or export your own credential before docker compose up.}
+
+      # Optional. Passing it does not enable the backup provider: that needs
+      # SOVRA_BACKUP_ENABLED=1 and SOVRA_ALLOW_BACKUP_FALLBACK=1 as well.
+      HUGGING_FACE_API_KEY: ${HUGGING_FACE_API_KEY:-}
+
+      # Application configuration. The default model is Apertus 1.5 70B and is
+      # never silently replaced by a smaller model.
+      SOVRA_MODEL: ${SOVRA_MODEL:-swiss-ai/Apertus-v1.5-70B}
+      SOVRA_CSCS_BASE_URL: ${SOVRA_CSCS_BASE_URL:-https://api.inference.cscs.ch/v1}
+      SOVRA_BACKUP_MODEL: ${SOVRA_BACKUP_MODEL:-swiss-ai/Apertus-8B-Instruct-2509}
+      SOVRA_BACKUP_ENABLED: ${SOVRA_BACKUP_ENABLED:-0}
+      SOVRA_ALLOW_BACKUP_FALLBACK: ${SOVRA_ALLOW_BACKUP_FALLBACK:-0}
+      SOVRA_ALLOW_OPTIONAL_8B: ${SOVRA_ALLOW_OPTIONAL_8B:-0}
+      SOVRA_MAX_OUTPUT_TOKENS: ${SOVRA_MAX_OUTPUT_TOKENS:-2048}
+      SOVRA_MAX_COMPARE_PAIRS: ${SOVRA_MAX_COMPARE_PAIRS:-60}
+      SOVRA_MAX_DOCUMENTS: ${SOVRA_MAX_DOCUMENTS:-10}
+      SOVRA_WORK_DIR: /app/.sovra_work
+
+      # Configurable on-premise endpoint. Left disabled: it is an architecture
+      # option, not a verified deployment.
+      SOVRA_LOCAL_ENABLED: ${SOVRA_LOCAL_ENABLED:-0}
+      SOVRA_LOCAL_BASE_URL: ${SOVRA_LOCAL_BASE_URL:-http://127.0.0.1:8000/v1}
+      SOVRA_LOCAL_MODEL: ${SOVRA_LOCAL_MODEL:-swiss-ai/Apertus-v1.5-70B}
+      SOVRA_LOCAL_API_KEY: ${SOVRA_LOCAL_API_KEY:-}
+
+      # Prompt contents are not logged by default.
+      SOVRA_LOG_PROMPT_CONTENTS: ${SOVRA_LOG_PROMPT_CONTENTS:-0}
+    ports:
+      - "${SOVRA_HOST_PORT:-8080}:8080"
+    volumes:
+      # Only the application work directory is persisted. No host credential
+      # path is ever mounted.
+      - sovra_work:/app/.sovra_work
+    restart: "no"
+
+volumes:
+  sovra_work:

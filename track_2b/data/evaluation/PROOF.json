@@ -1,0 +1,1316 @@
+{
+  "bundle": {
+    "generated_at": "2026-10-12T16:53:55+00:00",
+    "analysis_id": "429df808d24f4433",
+    "status": "complete",
+    "provider": "cscs",
+    "model": "swiss-ai/Apertus-v1.5-70B",
+    "prompt_version": "sovra-prompts-3",
+    "configuration": {
+      "primary_provider": "cscs",
+      "default_model": "swiss-ai/Apertus-v1.5-70B",
+      "backup_provider": "huggingface",
+      "backup_model": "swiss-ai/Apertus-8B-Instruct-2509",
+      "backup_fallback_enabled": false,
+      "optional_8b_enabled": false,
+      "limits": {
+        "max_documents": 10,
+        "max_upload_bytes": 10485760,
+        "max_extracted_chars": 400000,
+        "max_compare_pairs": 60
+      },
+      "providers": {
+        "cscs": {
+          "provider": "cscs",
+          "base_url": "https://api.inference.cscs.ch/v1",
+          "model": "swiss-ai/Apertus-v1.5-70B",
+          "credential_env": "CSCS_INFERENCE_API_KEY",
+          "api_key": "sk-g...1c (len=40)",
+          "configured": true,
+          "timeout_seconds": 180.0,
+          "max_output_tokens": 2048,
+          "max_retries": 2,
+          "enabled": true
+        },
+        "huggingface": {
+          "provider": "huggingface",
+          "base_url": "https://router.huggingface.co/v1",
+          "model": "swiss-ai/Apertus-8B-Instruct-2509",
+          "credential_env": "HUGGING_FACE_API_KEY",
+          "api_key": "hf_f...We (len=37)",
+          "configured": true,
+          "timeout_seconds": 180.0,
+          "max_output_tokens": 2048,
+          "max_retries": 2,
+          "enabled": false
+        },
+        "local": {
+          "provider": "local",
+          "base_url": "http://127.0.0.1:8000/v1",
+          "model": "swiss-ai/Apertus-v1.5-70B",
+          "credential_env": "SOVRA_LOCAL_API_KEY",
+          "api_key": "<unset>",
+          "configured": false,
+          "timeout_seconds": 180.0,
+          "max_output_tokens": 2048,
+          "max_retries": 2,
+          "enabled": false
+        }
+      }
+    },
+    "corpus": [
+      {
+        "id": "b703950b0a74445b",
+        "name": "01_master_supply_agreement.txt",
+        "sha256": "1202cdf34b4381c11435901a9bf629b35fc459cf5ba8b63e00ab69d48aa9efe1",
+        "size_bytes": 1094,
+        "page_count": 1,
+        "extraction_status": "ok",
+        "extraction_notes": []
+      },
+      {
+        "id": "94784ae867b34b40",
+        "name": "02_accounts_payable_policy.txt",
+        "sha256": "fed7c43f445118657d6506454333c7ff59ea1397b28422b92cc3550117796de6",
+        "size_bytes": 779,
+        "page_count": 1,
+        "extraction_status": "ok",
+        "extraction_notes": []
+      },
+      {
+        "id": "2b958ac3ea604fe6",
+        "name": "03_invoice_INV-2026-0417.txt",
+        "sha256": "02b8fbc6d74d627d7ac12247d92bba2edb4724baff22caf1daa4bfbc0a76fe88",
+        "size_bytes": 689,
+        "page_count": 1,
+        "extraction_status": "ok",
+        "extraction_notes": []
+      },
+      {
+        "id": "9f84ec4d54d34f0c",
+        "name": "04_amendment_2.txt",
+        "sha256": "8701e49ff13c79df599ac7c78806480073cbfd2184ffdf42ecf324feb08e2ed1",
+        "size_bytes": 510,
+        "page_count": 1,
+        "extraction_status": "ok",
+        "extraction_notes": []
+      }
+    ],
+    "usage": {
+      "calls": 11,
+      "failed_calls": 0,
+      "backup_calls": 0,
+      "downgrades": [],
+      "prompt_tokens": 9645,
+      "completion_tokens": 4247,
+      "total_tokens": 13892,
+      "models": [
+        "cscs:swiss-ai/Apertus-v1.5-70B"
+      ],
+      "latency_ms_total": 68879
+    },
+    "provider_ledger": [
+      {
+        "id": "f531fd6b8c9045f8",
+        "provider": "cscs",
+        "model": "swiss-ai/Apertus-v1.5-70B",
+        "mode": "claims",
+        "status": "ok",
+        "latency_ms": 12335,
+        "usage": {
+          "prompt_tokens": 1090,
+          "total_tokens": 1906,
+          "completion_tokens": 816,
+          "prompt_tokens_details": {
+            "cached_tokens": 384,
+            "multimodal_tokens": null
+          }
+        },
+        "started_at": "2026-10-12T16:52:12.846613+00:00",
+        "finished_at": "2026-10-12T16:52:25.182517+00:00",
+        "error_class": "",
+        "error_message": "",
+        "validation_errors": [],
+        "is_backup": false,
+        "downgraded_from": ""
+      },
+      {
+        "id": "167a701324474cd0",
+        "provider": "cscs",
+        "model": "swiss-ai/Apertus-v1.5-70B",
+        "mode": "claims",
+        "status": "ok",
+        "latency_ms": 21161,
+        "usage": {
+          "prompt_tokens": 1122,
+          "total_tokens": 2511,
+          "completion_tokens": 1389,
+          "prompt_tokens_details": {
+            "cached_tokens": 384,
+            "multimodal_tokens": null
+          }
+        },
+        "started_at": "2026-10-12T16:52:25.184467+00:00",
+        "finished_at": "2026-10-12T16:52:46.346381+00:00",
+        "error_class": "",
+        "error_message": "",
+        "validation_errors": [],
+        "is_backup": false,
+        "downgraded_from": ""
+      },
+      {
+        "id": "8482b2a120804ad5",
+        "provider": "cscs",
+        "model": "swiss-ai/Apertus-v1.5-70B",
+        "mode": "claims",
+        "status": "ok",
+        "latency_ms": 7839,
+        "usage": {
+          "prompt_tokens": 937,
+          "total_tokens": 1432,
+          "completion_tokens": 495,
+          "prompt_tokens_details": {
+            "cached_tokens": 128,
+            "multimodal_tokens": null
+          }
+        },
+        "started_at": "2026-10-12T16:52:46.348012+00:00",
+        "finished_at": "2026-10-12T16:52:54.187205+00:00",
+        "error_class": "",
+        "error_message": "",
+        "validation_errors": [],
+        "is_backup": false,
+        "downgraded_from": ""
+      },
+      {
+        "id": "628c81cc4991486f",
+        "provider": "cscs",
+        "model": "swiss-ai/Apertus-v1.5-70B",
+        "mode": "compare",
+        "status": "ok",
+        "latency_ms": 4013,
+        "usage": {
+          "prompt_tokens": 796,
+          "total_tokens": 1003,
+          "completion_tokens": 207,
+          "prompt_tokens_details": {
+            "cached_tokens": 416,
+            "multimodal_tokens": null
+          }
+        },
+        "started_at": "2026-10-12T16:52:54.209704+00:00",
+        "finished_at": "2026-10-12T16:52:58.223222+00:00",
+        "error_class": "",
+        "error_message": "",
+        "validation_errors": [],
+        "is_backup": false,
+        "downgraded_from": ""
+      },
+      {
+        "id": "6e98dd19bb494df1",
+        "provider": "cscs",
+        "model": "swiss-ai/Apertus-v1.5-70B",
+        "mode": "compare",
+        "status": "ok",
+        "latency_ms": 3295,
+        "usage": {
+          "prompt_tokens": 812,
+          "total_tokens": 992,
+          "completion_tokens": 180,
+          "prompt_tokens_details": {
+            "cached_tokens": 416,
+            "multimodal_tokens": null
+          }
+        },
+        "started_at": "2026-10-12T16:52:58.223525+00:00",
+        "finished_at": "2026-10-12T16:53:01.519151+00:00",
+        "error_class": "",
+        "error_message": "",
+        "validation_errors": [],
+        "is_backup": false,
+        "downgraded_from": ""
+      },
+      {
+        "id": "02c738dbdc6d4e74",
+        "provider": "cscs",
+        "model": "swiss-ai/Apertus-v1.5-70B",
+        "mode": "compare",
+        "status": "ok",
+        "latency_ms": 3351,
+        "usage": {
+          "prompt_tokens": 818,
+          "total_tokens": 1015,
+          "completion_tokens": 197,
+          "prompt_tokens_details": {
+            "cached_tokens": 416,
+            "multimodal_tokens": null
+          }
+        },
+        "started_at": "2026-10-12T16:53:01.519385+00:00",
+        "finished_at": "2026-10-12T16:53:04.871278+00:00",
+        "error_class": "",
+        "error_message": "",
+        "validation_errors": [],
+        "is_backup": false,
+        "downgraded_from": ""
+      },
+      {
+        "id": "e28b2fd960e64bb9",
+        "provider": "cscs",
+        "model": "swiss-ai/Apertus-v1.5-70B",
+        "mode": "compare",
+        "status": "ok",
+        "latency_ms": 3841,
+        "usage": {
+          "prompt_tokens": 806,
+          "total_tokens": 1022,
+          "completion_tokens": 216,
+          "prompt_tokens_details": {
+            "cached_tokens": 416,
+            "multimodal_tokens": null
+          }
+        },
+        "started_at": "2026-10-12T16:53:04.871508+00:00",
+        "finished_at": "2026-10-12T16:53:08.712969+00:00",
+        "error_class": "",
+        "error_message": "",
+        "validation_errors": [],
+        "is_backup": false,
+        "downgraded_from": ""
+      },
+      {
+        "id": "b109ed299ef04d15",
+        "provider": "cscs",
+        "model": "swiss-ai/Apertus-v1.5-70B",
+        "mode": "compare",
+        "status": "ok",
+        "latency_ms": 3443,
+        "usage": {
+          "prompt_tokens": 802,
+          "total_tokens": 986,
+          "completion_tokens": 184,
+          "prompt_tokens_details": {
+            "cached_tokens": 416,
+            "multimodal_tokens": null
+          }
+        },
+        "started_at": "2026-10-12T16:53:08.713287+00:00",
+        "finished_at": "2026-10-12T16:53:12.156762+00:00",
+        "error_class": "",
+        "error_message": "",
+        "validation_errors": [],
+        "is_backup": false,
+        "downgraded_from": ""
+      },
+      {
+        "id": "c4be78c36c2e45af",
+        "provider": "cscs",
+        "model": "swiss-ai/Apertus-v1.5-70B",
+        "mode": "compare",
+        "status": "ok",
+        "latency_ms": 3350,
+        "usage": {
+          "prompt_tokens": 812,
+          "total_tokens": 1024,
+          "completion_tokens": 212,
+          "prompt_tokens_details": {
+            "cached_tokens": 512,
+            "multimodal_tokens": null
+          }
+        },
+        "started_at": "2026-10-12T16:53:12.156988+00:00",
+        "finished_at": "2026-10-12T16:53:15.507782+00:00",
+        "error_class": "",
+        "error_message": "",
+        "validation_errors": [],
+        "is_backup": false,
+        "downgraded_from": ""
+      },
+      {
+        "id": "9498c12d3609462c",
+        "provider": "cscs",
+        "model": "swiss-ai/Apertus-v1.5-70B",
+        "mode": "compare",
+        "status": "ok",
+        "latency_ms": 3141,
+        "usage": {
+          "prompt_tokens": 822,
+          "total_tokens": 1000,
+          "completion_tokens": 178,
+          "prompt_tokens_details": {
+            "cached_tokens": 512,
+            "multimodal_tokens": null
+          }
+        },
+        "started_at": "2026-10-12T16:53:15.508020+00:00",
+        "finished_at": "2026-10-12T16:53:18.649968+00:00",
+        "error_class": "",
+        "error_message": "",
+        "validation_errors": [],
+        "is_backup": false,
+        "downgraded_from": ""
+      },
+      {
+        "id": "3951e1100b324ea8",
+        "provider": "cscs",
+        "model": "swiss-ai/Apertus-v1.5-70B",
+        "mode": "compare",
+        "status": "ok",
+        "latency_ms": 3110,
+        "usage": {
+          "prompt_tokens": 828,
+          "total_tokens": 1001,
+          "completion_tokens": 173,
+          "prompt_tokens_details": {
+            "cached_tokens": 512,
+            "multimodal_tokens": null
+          }
+        },
+        "started_at": "2026-10-12T16:53:18.650286+00:00",
+        "finished_at": "2026-10-12T16:53:21.761104+00:00",
+        "error_class": "",
+        "error_message": "",
+        "validation_errors": [],
+        "is_backup": false,
+        "downgraded_from": ""
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim-0-b703950b0a74445b",
+        "document_id": "b703950b0a74445b",
+        "predicate": "Effective date",
+        "predicate_normalized": "effective_date",
+        "value": "2026-01-01",
+        "value_normalized": "2026-01-01",
+        "unit": "date",
+        "effective_date": "2026-01-01",
+        "source_passage_id": "b703950b0a74445b-p1",
+        "quote_start": 25,
+        "quote_end": 34,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-1-b703950b0a74445b",
+        "document_id": "b703950b0a74445b",
+        "predicate": "Term end date",
+        "predicate_normalized": "term_end",
+        "value": "2028-12-31",
+        "value_normalized": "2028-12-31",
+        "unit": "date",
+        "effective_date": "unknown",
+        "source_passage_id": "b703950b0a74445b-p1",
+        "quote_start": 53,
+        "quote_end": 64,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-2-b703950b0a74445b",
+        "document_id": "b703950b0a74445b",
+        "predicate": "Scope",
+        "predicate_normalized": "scope",
+        "value": "road-freight logistics services supplied by Nordwind Logistik AG to Helvetia Praezision GmbH under purchase orders referencing this agreement",
+        "value_normalized": "road-freight logistics services supplied by nordwind logisti",
+        "unit": "unknown",
+        "effective_date": "unknown",
+        "source_passage_id": "b703950b0a74445b-p2",
+        "quote_start": 154,
+        "quote_end": 340,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-3-b703950b0a74445b",
+        "document_id": "b703950b0a74445b",
+        "predicate": "Payment obligation for undisputed invoices",
+        "predicate_normalized": "payment_period",
+        "value": "pay within 30 days of the invoice date",
+        "value_normalized": "30 days",
+        "unit": "days",
+        "effective_date": "unknown",
+        "source_passage_id": "b703950b0a74445b-p3",
+        "quote_start": 342,
+        "quote_end": 386,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-6-b703950b0a74445b",
+        "document_id": "b703950b0a74445b",
+        "predicate": "Disputed invoice payment withholding right",
+        "predicate_normalized": "dispute_window",
+        "value": "may withhold payment if notified in writing within 10 days of receipt of the invoice",
+        "value_normalized": "10 days",
+        "unit": "days",
+        "effective_date": "unknown",
+        "source_passage_id": "b703950b0a74445b-p6",
+        "quote_start": 925,
+        "quote_end": 993,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-7-94784ae867b34b40",
+        "document_id": "94784ae867b34b40",
+        "predicate": "Effective date",
+        "predicate_normalized": "effective_date",
+        "value": "2026-01-01",
+        "value_normalized": "2026-01-01",
+        "unit": "date",
+        "effective_date": "2026-01-01",
+        "source_passage_id": "94784ae867b34b40-p1",
+        "quote_start": 52,
+        "quote_end": 237,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-8-94784ae867b34b40",
+        "document_id": "94784ae867b34b40",
+        "predicate": "Settlement period",
+        "predicate_normalized": "payment_period",
+        "value": "60 days",
+        "value_normalized": "60 days",
+        "unit": "days",
+        "effective_date": "unknown",
+        "source_passage_id": "94784ae867b34b40-p2",
+        "quote_start": 239,
+        "quote_end": 430,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-9-94784ae867b34b40",
+        "document_id": "94784ae867b34b40",
+        "predicate": "Approval condition",
+        "predicate_normalized": "approval_condition",
+        "value": "three-way matching against purchase order and goods receipt record",
+        "value_normalized": "three-way matching against purchase order and goods receipt ",
+        "unit": "unknown",
+        "effective_date": "unknown",
+        "source_passage_id": "94784ae867b34b40-p3",
+        "quote_start": 432,
+        "quote_end": 600,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-10-94784ae867b34b40",
+        "document_id": "94784ae867b34b40",
+        "predicate": "Currency",
+        "predicate_normalized": "currency",
+        "value": "Swiss francs (CHF)",
+        "value_normalized": "swiss francs (chf)",
+        "unit": "currency",
+        "effective_date": "unknown",
+        "source_passage_id": "94784ae867b34b40-p4",
+        "quote_start": 602,
+        "quote_end": 778,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-11-2b958ac3ea604fe6",
+        "document_id": "2b958ac3ea604fe6",
+        "predicate": "Supplier",
+        "predicate_normalized": "other:supplier",
+        "value": "Nordwind Logistik AG",
+        "value_normalized": "nordwind logistik ag",
+        "unit": "unknown",
+        "effective_date": "unknown",
+        "source_passage_id": "2b958ac3ea604fe6-p1",
+        "quote_start": 9,
+        "quote_end": 194,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-15-2b958ac3ea604fe6",
+        "document_id": "2b958ac3ea604fe6",
+        "predicate": "Amount",
+        "predicate_normalized": "amount",
+        "value": "4,180.00 CHF",
+        "value_normalized": "4180",
+        "unit": "CHF",
+        "effective_date": "unknown",
+        "source_passage_id": "2b958ac3ea604fe6-p2",
+        "quote_start": 196,
+        "quote_end": 224,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-16-2b958ac3ea604fe6",
+        "document_id": "2b958ac3ea604fe6",
+        "predicate": "Amount",
+        "predicate_normalized": "amount",
+        "value": "296.50 CHF",
+        "value_normalized": "296.5",
+        "unit": "CHF",
+        "effective_date": "unknown",
+        "source_passage_id": "2b958ac3ea604fe6-p2",
+        "quote_start": 236,
+        "quote_end": 264,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-18-2b958ac3ea604fe6",
+        "document_id": "2b958ac3ea604fe6",
+        "predicate": "Total amount due",
+        "predicate_normalized": "amount",
+        "value": "4,616.50 CHF",
+        "value_normalized": "4616.5",
+        "unit": "CHF",
+        "effective_date": "unknown",
+        "source_passage_id": "2b958ac3ea604fe6-p3",
+        "quote_start": 423,
+        "quote_end": 499,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-19-2b958ac3ea604fe6",
+        "document_id": "2b958ac3ea604fe6",
+        "predicate": "payment terms",
+        "predicate_normalized": "payment_period",
+        "value": "payable within 30 days of the invoice date",
+        "value_normalized": "30 days",
+        "unit": "days",
+        "effective_date": "unknown",
+        "source_passage_id": "2b958ac3ea604fe6-p4",
+        "quote_start": 501,
+        "quote_end": 615,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-20-2b958ac3ea604fe6",
+        "document_id": "2b958ac3ea604fe6",
+        "predicate": "payment reference",
+        "predicate_normalized": "other:payment reference",
+        "value": "INV-2026-0417 / PO-4471",
+        "value_normalized": "inv-2026-0417 / po-4471",
+        "unit": "unknown",
+        "effective_date": "unknown",
+        "source_passage_id": "2b958ac3ea604fe6-p5",
+        "quote_start": 617,
+        "quote_end": 688,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-21-9f84ec4d54d34f0c",
+        "document_id": "9f84ec4d54d34f0c",
+        "predicate": "payment period",
+        "predicate_normalized": "payment_period",
+        "value": "changed from 30 days to 45 days of the invoice date",
+        "value_normalized": "30 days",
+        "unit": "days",
+        "effective_date": "2026-05-01",
+        "source_passage_id": "9f84ec4d54d34f0c-p2",
+        "quote_start": 135,
+        "quote_end": 296,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-22-9f84ec4d54d34f0c",
+        "document_id": "9f84ec4d54d34f0c",
+        "predicate": "payment terms",
+        "predicate_normalized": "payment_period",
+        "value": "remain payable under the terms in force on their invoice date",
+        "value_normalized": "remain payable under the terms in force on their invoice dat",
+        "unit": "unknown",
+        "effective_date": "2026-05-01",
+        "source_passage_id": "9f84ec4d54d34f0c-p3",
+        "quote_start": 298,
+        "quote_end": 429,
+        "extraction_status": "ok",
+        "origin": "apertus"
+      },
+      {
+        "id": "b703950b0a74445b-rule-4",
+        "document_id": "b703950b0a74445b",
+        "predicate": "payment_period",
+        "predicate_normalized": "payment_period",
+        "value": "10 days",
+        "value_normalized": "10 days",
+        "unit": "days",
+        "effective_date": "unknown",
+        "source_passage_id": "b703950b0a74445b-p4",
+        "quote_start": 533,
+        "quote_end": 742,
+        "extraction_status": "ok",
+        "origin": "rules"
+      },
+      {
+        "id": "b703950b0a74445b-rule-6",
+        "document_id": "b703950b0a74445b",
+        "predicate": "payment_period",
+        "predicate_normalized": "payment_period",
+        "value": "10 days",
+        "value_normalized": "10 days",
+        "unit": "days",
+        "effective_date": "unknown",
+        "source_passage_id": "b703950b0a74445b-p6",
+        "quote_start": 925,
+        "quote_end": 1093,
+        "extraction_status": "ok",
+        "origin": "rules"
+      },
+      {
+        "id": "2b958ac3ea604fe6-rule-1",
+        "document_id": "2b958ac3ea604fe6",
+        "predicate": "effective_date",
+        "predicate_normalized": "effective_date",
+        "value": "2026-04-02",
+        "value_normalized": "2026-04-02",
+        "unit": "date",
+        "effective_date": "2026-04-02",
+        "source_passage_id": "2b958ac3ea604fe6-p1",
+        "quote_start": 9,
+        "quote_end": 194,
+        "extraction_status": "ok",
+        "origin": "rules"
+      },
+      {
+        "id": "9f84ec4d54d34f0c-rule-1",
+        "document_id": "9f84ec4d54d34f0c",
+        "predicate": "effective_date",
+        "predicate_normalized": "effective_date",
+        "value": "2026-05-01",
+        "value_normalized": "2026-05-01",
+        "unit": "date",
+        "effective_date": "2026-05-01",
+        "source_passage_id": "9f84ec4d54d34f0c-p1",
+        "quote_start": 48,
+        "quote_end": 133,
+        "extraction_status": "ok",
+        "origin": "rules"
+      },
+      {
+        "id": "claim-4-b703950b0a74445b",
+        "document_id": "b703950b0a74445b",
+        "predicate": "Payment term",
+        "predicate_normalized": "payment_period",
+        "value": "payable within 10 days of the invoice date",
+        "value_normalized": "10 days",
+        "unit": "days",
+        "effective_date": "unknown",
+        "source_passage_id": "b703950b0a74445b-p4",
+        "quote_start": 533,
+        "quote_end": 742,
+        "extraction_status": "unresolved",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-5-b703950b0a74445b",
+        "document_id": "b703950b0a74445b",
+        "predicate": "Currency",
+        "predicate_normalized": "currency",
+        "value": "Swiss francs (CHF)",
+        "value_normalized": "swiss francs (chf)",
+        "unit": "currency",
+        "effective_date": "unknown",
+        "source_passage_id": "b703950b0a74445b-p5",
+        "quote_start": 744,
+        "quote_end": 923,
+        "extraction_status": "unresolved",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-12-2b958ac3ea604fe6",
+        "document_id": "2b958ac3ea604fe6",
+        "predicate": "Customer",
+        "predicate_normalized": "other:customer",
+        "value": "Helvetia Praezision GmbH",
+        "value_normalized": "helvetia praezision gmbh",
+        "unit": "unknown",
+        "effective_date": "unknown",
+        "source_passage_id": "2b958ac3ea604fe6-p1",
+        "quote_start": 9,
+        "quote_end": 194,
+        "extraction_status": "unresolved",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-13-2b958ac3ea604fe6",
+        "document_id": "2b958ac3ea604fe6",
+        "predicate": "Invoice date",
+        "predicate_normalized": "other:invoice date",
+        "value": "2026-04-02",
+        "value_normalized": "2026-04-02",
+        "unit": "date",
+        "effective_date": "2026-04-02",
+        "source_passage_id": "2b958ac3ea604fe6-p1",
+        "quote_start": 9,
+        "quote_end": 194,
+        "extraction_status": "unresolved",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-14-2b958ac3ea604fe6",
+        "document_id": "2b958ac3ea604fe6",
+        "predicate": "Purchase order",
+        "predicate_normalized": "other:purchase order",
+        "value": "PO-4471",
+        "value_normalized": "po-4471",
+        "unit": "unknown",
+        "effective_date": "unknown",
+        "source_passage_id": "2b958ac3ea604fe6-p1",
+        "quote_start": 9,
+        "quote_end": 194,
+        "extraction_status": "unresolved",
+        "origin": "apertus"
+      },
+      {
+        "id": "claim-17-2b958ac3ea604fe6",
+        "document_id": "2b958ac3ea604fe6",
+        "predicate": "Amount",
+        "predicate_normalized": "amount",
+        "value": "140.00 CHF",
+        "value_normalized": "140",
+        "unit": "CHF",
+        "effective_date": "unknown",
+        "source_passage_id": "2b958ac3ea604fe6-p2",
+        "quote_start": 196,
+        "quote_end": 421,
+        "extraction_status": "unresolved",
+        "origin": "apertus"
+      }
+    ],
+    "findings": [
+      {
+        "id": "dd4b29faad5a453d",
+        "analysis_id": "429df808d24f4433",
+        "claim_ids": [
+          "claim-8-94784ae867b34b40",
+          "b703950b0a74445b-rule-4"
+        ],
+        "relation": "potential_conflict",
+        "explanation": "Claim A states a settlement period of 60 days, while Claim B states a payment period of 10 days for a specific exception. The values are incompatible for the same scope without an exception noted in Claim A.",
+        "evidence": [
+          {
+            "passage_id": "94784ae867b34b40-p2",
+            "document_id": "94784ae867b34b40",
+            "page": 1,
+            "start_offset": 239,
+            "end_offset": 430,
+            "quote": "Policy 4.1 Standard settlement period\nAll supplier invoices are settled within 60 days of the invoice date. Finance\nOperations processes the payment run on the last working day of each month.",
+            "resolved": true,
+            "reason": ""
+          },
+          {
+            "passage_id": "b703950b0a74445b-p4",
+            "document_id": "b703950b0a74445b",
+            "page": 1,
+            "start_offset": 533,
+            "end_offset": 742,
+            "quote": "Clause 7.5 Expedited freight exception\nInvoices issued under the expedited freight programme described in Schedule C\nare payable within 10 days of the invoice date. Clause 7.2 does not apply to\nthose invoices.",
+            "resolved": true,
+            "reason": ""
+          }
+        ],
+        "limitations": [
+          "Scope of Claim B is limited to 'expedited freight programme' which may not apply to all invoices covered by Claim A.",
+          "model judgement; not a legal or factual determination"
+        ],
+        "review_status": "pending",
+        "review_note": "",
+        "provider_run_id": "628c81cc4991486f",
+        "created_at": "2026-10-12T16:52:58.223433Z"
+      },
+      {
+        "id": "b64dd85075064030",
+        "analysis_id": "429df808d24f4433",
+        "claim_ids": [
+          "claim-19-2b958ac3ea604fe6",
+          "b703950b0a74445b-rule-4"
+        ],
+        "relation": "potential_conflict",
+        "explanation": "Claim A states payment is due within 30 days, while Claim B states payment is due within 10 days.",
+        "evidence": [
+          {
+            "passage_id": "2b958ac3ea604fe6-p4",
+            "document_id": "2b958ac3ea604fe6",
+            "page": 1,
+            "start_offset": 501,
+            "end_offset": 615,
+            "quote": "Payment terms: payable within 30 days of the invoice date, as stated in Clause\n7.2 of the Master Supply Agreement.",
+            "resolved": true,
+            "reason": ""
+          },
+          {
+            "passage_id": "b703950b0a74445b-p4",
+            "document_id": "b703950b0a74445b",
+            "page": 1,
+            "start_offset": 533,
+            "end_offset": 742,
+            "quote": "Clause 7.5 Expedited freight exception\nInvoices issued under the expedited freight programme described in Schedule C\nare payable within 10 days of the invoice date. Clause 7.2 does not apply to\nthose invoices.",
+            "resolved": true,
+            "reason": ""
+          }
+        ],
+        "limitations": [
+          "The passages do not specify if the invoice in question falls under the expedited freight exception mentioned in Claim B.",
+          "model judgement; not a legal or factual determination"
+        ],
+        "review_status": "pending",
+        "review_note": "",
+        "provider_run_id": "6e98dd19bb494df1",
+        "created_at": "2026-10-12T16:53:01.519312Z"
+      },
+      {
+        "id": "b6f949239d444820",
+        "analysis_id": "429df808d24f4433",
+        "claim_ids": [
+          "claim-21-9f84ec4d54d34f0c",
+          "b703950b0a74445b-rule-4"
+        ],
+        "relation": "potential_conflict",
+        "explanation": "Claim A states the payment period is 45 days for undisputed invoices, while Claim B states the payment period is 10 days without specifying scope.",
+        "evidence": [
+          {
+            "passage_id": "9f84ec4d54d34f0c-p2",
+            "document_id": "9f84ec4d54d34f0c",
+            "page": 1,
+            "start_offset": 135,
+            "end_offset": 296,
+            "quote": "Clause 1\nClause 7.2 of the Master Supply Agreement is amended. The payment period for\nundisputed invoices is changed from 30 days to 45 days of the invoice date.",
+            "resolved": true,
+            "reason": ""
+          },
+          {
+            "passage_id": "b703950b0a74445b-p4",
+            "document_id": "b703950b0a74445b",
+            "page": 1,
+            "start_offset": 533,
+            "end_offset": 742,
+            "quote": "Clause 7.5 Expedited freight exception\nInvoices issued under the expedited freight programme described in Schedule C\nare payable within 10 days of the invoice date. Clause 7.2 does not apply to\nthose invoices.",
+            "resolved": true,
+            "reason": ""
+          }
+        ],
+        "limitations": [
+          "Scope of applicability (e.g., expedited freight exception) is not specified in Claim A, so conflict may not apply to all invoices.",
+          "model judgement; not a legal or factual determination"
+        ],
+        "review_status": "pending",
+        "review_note": "",
+        "provider_run_id": "02c738dbdc6d4e74",
+        "created_at": "2026-10-12T16:53:04.871433Z"
+      },
+      {
+        "id": "2fe13dec97c84a51",
+        "analysis_id": "429df808d24f4433",
+        "claim_ids": [
+          "claim-3-b703950b0a74445b",
+          "claim-8-94784ae867b34b40"
+        ],
+        "relation": "potential_conflict",
+        "explanation": "Claim A specifies a 30-day payment term for undisputed invoices, while Claim B specifies a 60-day settlement period for all supplier invoices.",
+        "evidence": [
+          {
+            "passage_id": "b703950b0a74445b-p3",
+            "document_id": "b703950b0a74445b",
+            "page": 1,
+            "start_offset": 342,
+            "end_offset": 531,
+            "quote": "Clause 7.2 Payment terms\nThe Buyer shall pay each undisputed invoice within 30 days of the invoice date.\nPayments shall be made in CHF by bank transfer to the account stated on the\ninvoice.",
+            "resolved": true,
+            "reason": ""
+          },
+          {
+            "passage_id": "94784ae867b34b40-p2",
+            "document_id": "94784ae867b34b40",
+            "page": 1,
+            "start_offset": 239,
+            "end_offset": 430,
+            "quote": "Policy 4.1 Standard settlement period\nAll supplier invoices are settled within 60 days of the invoice date. Finance\nOperations processes the payment run on the last working day of each month.",
+            "resolved": true,
+            "reason": ""
+          }
+        ],
+        "limitations": [
+          "The passages do not specify if the invoices overlap in scope (e.g., whether 'undisputed invoices' in Claim A are a subset of 'all supplier invoices' in Claim B), which could resolve the apparent conflict.",
+          "model judgement; not a legal or factual determination"
+        ],
+        "review_status": "pending",
+        "review_note": "",
+        "provider_run_id": "e28b2fd960e64bb9",
+        "created_at": "2026-10-12T16:53:08.713196Z"
+      },
+      {
+        "id": "9cc84bfdc9564bda",
+        "analysis_id": "429df808d24f4433",
+        "claim_ids": [
+          "claim-22-9f84ec4d54d34f0c",
+          "b703950b0a74445b-rule-4"
+        ],
+        "relation": "unrelated",
+        "explanation": "Claim A refers to payment terms remaining unchanged before the amendment's effective date, while Claim B specifies a 10-day payment period for a specific expedited freight exception. The subjects and scopes differ.",
+        "evidence": [
+          {
+            "passage_id": "9f84ec4d54d34f0c-p3",
+            "document_id": "9f84ec4d54d34f0c",
+            "page": 1,
+            "start_offset": 298,
+            "end_offset": 429,
+            "quote": "Clause 2\nInvoices issued before the effective date of this amendment remain payable\nunder the terms in force on their invoice date.",
+            "resolved": true,
+            "reason": ""
+          },
+          {
+            "passage_id": "b703950b0a74445b-p4",
+            "document_id": "b703950b0a74445b",
+            "page": 1,
+            "start_offset": 533,
+            "end_offset": 742,
+            "quote": "Clause 7.5 Expedited freight exception\nInvoices issued under the expedited freight programme described in Schedule C\nare payable within 10 days of the invoice date. Clause 7.2 does not apply to\nthose invoices.",
+            "resolved": true,
+            "reason": ""
+          }
+        ],
+        "limitations": [
+          "Scope of Claim A is limited to invoices before amendment effective date; Claim B's scope is limited to expedited freight invoices, making direct comparison impossible.",
+          "model judgement; not a legal or factual determination"
+        ],
+        "review_status": "pending",
+        "review_note": "",
+        "provider_run_id": "b109ed299ef04d15",
+        "created_at": "2026-10-12T16:53:12.156914Z"
+      },
+      {
+        "id": "331eaeda4c5f4da7",
+        "analysis_id": "429df808d24f4433",
+        "claim_ids": [
+          "claim-3-b703950b0a74445b",
+          "claim-22-9f84ec4d54d34f0c"
+        ],
+        "relation": "potential_conflict",
+        "explanation": "Claim A specifies a fixed 30-day payment term for undisputed invoices, while Claim B states that invoices issued before the amendment's effective date are governed by their original invoice terms, which may differ from the 30-day term.",
+        "evidence": [
+          {
+            "passage_id": "b703950b0a74445b-p3",
+            "document_id": "b703950b0a74445b",
+            "page": 1,
+            "start_offset": 342,
+            "end_offset": 531,
+            "quote": "Clause 7.2 Payment terms\nThe Buyer shall pay each undisputed invoice within 30 days of the invoice date.\nPayments shall be made in CHF by bank transfer to the account stated on the\ninvoice.",
+            "resolved": true,
+            "reason": ""
+          },
+          {
+            "passage_id": "9f84ec4d54d34f0c-p3",
+            "document_id": "9f84ec4d54d34f0c",
+            "page": 1,
+            "start_offset": 298,
+            "end_offset": 429,
+            "quote": "Clause 2\nInvoices issued before the effective date of this amendment remain payable\nunder the terms in force on their invoice date.",
+            "resolved": true,
+            "reason": ""
+          }
+        ],
+        "limitations": [
+          "The original invoice terms referenced in Claim B are not provided in the supplied passages, so the exact nature of the conflict cannot be confirmed.",
+          "model judgement; not a legal or factual determination"
+        ],
+        "review_status": "pending",
+        "review_note": "",
+        "provider_run_id": "c4be78c36c2e45af",
+        "created_at": "2026-10-12T16:53:15.507947Z"
+      },
+      {
+        "id": "53c511898a564486",
+        "analysis_id": "429df808d24f4433",
+        "claim_ids": [
+          "claim-3-b703950b0a74445b",
+          "claim-19-2b958ac3ea604fe6"
+        ],
+        "relation": "consistent",
+        "explanation": "Both claims state that payment is due within 30 days of the invoice date, matching the same predicate and unit. Claim B explicitly references Clause 7.2 of the Master Supply Agreement, which is the source of Claim A.",
+        "evidence": [
+          {
+            "passage_id": "b703950b0a74445b-p3",
+            "document_id": "b703950b0a74445b",
+            "page": 1,
+            "start_offset": 342,
+            "end_offset": 531,
+            "quote": "Clause 7.2 Payment terms\nThe Buyer shall pay each undisputed invoice within 30 days of the invoice date.\nPayments shall be made in CHF by bank transfer to the account stated on the\ninvoice.",
+            "resolved": true,
+            "reason": ""
+          },
+          {
+            "passage_id": "2b958ac3ea604fe6-p4",
+            "document_id": "2b958ac3ea604fe6",
+            "page": 1,
+            "start_offset": 501,
+            "end_offset": 615,
+            "quote": "Payment terms: payable within 30 days of the invoice date, as stated in Clause\n7.2 of the Master Supply Agreement.",
+            "resolved": true,
+            "reason": ""
+          }
+        ],
+        "limitations": [
+          "No information on invoice dispute status or exceptions is provided in the passages.",
+          "model judgement; not a legal or factual determination"
+        ],
+        "review_status": "pending",
+        "review_note": "",
+        "provider_run_id": "9498c12d3609462c",
+        "created_at": "2026-10-12T16:53:18.650190Z"
+      },
+      {
+        "id": "226de5ef848a4fb1",
+        "analysis_id": "429df808d24f4433",
+        "claim_ids": [
+          "claim-3-b703950b0a74445b",
+          "claim-21-9f84ec4d54d34f0c"
+        ],
+        "relation": "potential_conflict",
+        "explanation": "Claim A states undisputed invoices are payable within 30 days, while Claim B states the payment period for undisputed invoices was changed to 45 days.",
+        "evidence": [
+          {
+            "passage_id": "b703950b0a74445b-p3",
+            "document_id": "b703950b0a74445b",
+            "page": 1,
+            "start_offset": 342,
+            "end_offset": 531,
+            "quote": "Clause 7.2 Payment terms\nThe Buyer shall pay each undisputed invoice within 30 days of the invoice date.\nPayments shall be made in CHF by bank transfer to the account stated on the\ninvoice.",
+            "resolved": true,
+            "reason": ""
+          },
+          {
+            "passage_id": "9f84ec4d54d34f0c-p2",
+            "document_id": "9f84ec4d54d34f0c",
+            "page": 1,
+            "start_offset": 135,
+            "end_offset": 296,
+            "quote": "Clause 1\nClause 7.2 of the Master Supply Agreement is amended. The payment period for\nundisputed invoices is changed from 30 days to 45 days of the invoice date.",
+            "resolved": true,
+            "reason": ""
+          }
+        ],
+        "limitations": [
+          "The amendment's effective date may not have been reached, making the older term still applicable",
+          "model judgement; not a legal or factual determination"
+        ],
+        "review_status": "pending",
+        "review_note": "",
+        "provider_run_id": "3951e1100b324ea8",
+        "created_at": "2026-10-12T16:53:21.761257Z"
+      }
+    ],
+    "citation_check": {
+      "spans": 16,
+      "all_reproduce": true,
+      "detail": [
+        {
+          "finding_id": "dd4b29faad5a453d",
+          "document_id": "94784ae867b34b40",
+          "page": 1,
+          "start_offset": 239,
+          "end_offset": 430,
+          "quote_from_application": "Policy 4.1 Standard settlement period\nAll supplier invoices are settled within 60 days of the invoice date. Finance\nOperations processes the payment run on the last working day of each month.",
+          "quote_recomputed_from_canonical": "Policy 4.1 Standard settlement period\nAll supplier invoices are settled within 60 days of the invoice date. Finance\nOperations processes the payment run on the last working day of each month.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "dd4b29faad5a453d",
+          "document_id": "b703950b0a74445b",
+          "page": 1,
+          "start_offset": 533,
+          "end_offset": 742,
+          "quote_from_application": "Clause 7.5 Expedited freight exception\nInvoices issued under the expedited freight programme described in Schedule C\nare payable within 10 days of the invoice date. Clause 7.2 does not apply to\nthose invoices.",
+          "quote_recomputed_from_canonical": "Clause 7.5 Expedited freight exception\nInvoices issued under the expedited freight programme described in Schedule C\nare payable within 10 days of the invoice date. Clause 7.2 does not apply to\nthose invoices.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "b64dd85075064030",
+          "document_id": "2b958ac3ea604fe6",
+          "page": 1,
+          "start_offset": 501,
+          "end_offset": 615,
+          "quote_from_application": "Payment terms: payable within 30 days of the invoice date, as stated in Clause\n7.2 of the Master Supply Agreement.",
+          "quote_recomputed_from_canonical": "Payment terms: payable within 30 days of the invoice date, as stated in Clause\n7.2 of the Master Supply Agreement.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "b64dd85075064030",
+          "document_id": "b703950b0a74445b",
+          "page": 1,
+          "start_offset": 533,
+          "end_offset": 742,
+          "quote_from_application": "Clause 7.5 Expedited freight exception\nInvoices issued under the expedited freight programme described in Schedule C\nare payable within 10 days of the invoice date. Clause 7.2 does not apply to\nthose invoices.",
+          "quote_recomputed_from_canonical": "Clause 7.5 Expedited freight exception\nInvoices issued under the expedited freight programme described in Schedule C\nare payable within 10 days of the invoice date. Clause 7.2 does not apply to\nthose invoices.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "b6f949239d444820",
+          "document_id": "9f84ec4d54d34f0c",
+          "page": 1,
+          "start_offset": 135,
+          "end_offset": 296,
+          "quote_from_application": "Clause 1\nClause 7.2 of the Master Supply Agreement is amended. The payment period for\nundisputed invoices is changed from 30 days to 45 days of the invoice date.",
+          "quote_recomputed_from_canonical": "Clause 1\nClause 7.2 of the Master Supply Agreement is amended. The payment period for\nundisputed invoices is changed from 30 days to 45 days of the invoice date.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "b6f949239d444820",
+          "document_id": "b703950b0a74445b",
+          "page": 1,
+          "start_offset": 533,
+          "end_offset": 742,
+          "quote_from_application": "Clause 7.5 Expedited freight exception\nInvoices issued under the expedited freight programme described in Schedule C\nare payable within 10 days of the invoice date. Clause 7.2 does not apply to\nthose invoices.",
+          "quote_recomputed_from_canonical": "Clause 7.5 Expedited freight exception\nInvoices issued under the expedited freight programme described in Schedule C\nare payable within 10 days of the invoice date. Clause 7.2 does not apply to\nthose invoices.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "2fe13dec97c84a51",
+          "document_id": "b703950b0a74445b",
+          "page": 1,
+          "start_offset": 342,
+          "end_offset": 531,
+          "quote_from_application": "Clause 7.2 Payment terms\nThe Buyer shall pay each undisputed invoice within 30 days of the invoice date.\nPayments shall be made in CHF by bank transfer to the account stated on the\ninvoice.",
+          "quote_recomputed_from_canonical": "Clause 7.2 Payment terms\nThe Buyer shall pay each undisputed invoice within 30 days of the invoice date.\nPayments shall be made in CHF by bank transfer to the account stated on the\ninvoice.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "2fe13dec97c84a51",
+          "document_id": "94784ae867b34b40",
+          "page": 1,
+          "start_offset": 239,
+          "end_offset": 430,
+          "quote_from_application": "Policy 4.1 Standard settlement period\nAll supplier invoices are settled within 60 days of the invoice date. Finance\nOperations processes the payment run on the last working day of each month.",
+          "quote_recomputed_from_canonical": "Policy 4.1 Standard settlement period\nAll supplier invoices are settled within 60 days of the invoice date. Finance\nOperations processes the payment run on the last working day of each month.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "9cc84bfdc9564bda",
+          "document_id": "9f84ec4d54d34f0c",
+          "page": 1,
+          "start_offset": 298,
+          "end_offset": 429,
+          "quote_from_application": "Clause 2\nInvoices issued before the effective date of this amendment remain payable\nunder the terms in force on their invoice date.",
+          "quote_recomputed_from_canonical": "Clause 2\nInvoices issued before the effective date of this amendment remain payable\nunder the terms in force on their invoice date.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "9cc84bfdc9564bda",
+          "document_id": "b703950b0a74445b",
+          "page": 1,
+          "start_offset": 533,
+          "end_offset": 742,
+          "quote_from_application": "Clause 7.5 Expedited freight exception\nInvoices issued under the expedited freight programme described in Schedule C\nare payable within 10 days of the invoice date. Clause 7.2 does not apply to\nthose invoices.",
+          "quote_recomputed_from_canonical": "Clause 7.5 Expedited freight exception\nInvoices issued under the expedited freight programme described in Schedule C\nare payable within 10 days of the invoice date. Clause 7.2 does not apply to\nthose invoices.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "331eaeda4c5f4da7",
+          "document_id": "b703950b0a74445b",
+          "page": 1,
+          "start_offset": 342,
+          "end_offset": 531,
+          "quote_from_application": "Clause 7.2 Payment terms\nThe Buyer shall pay each undisputed invoice within 30 days of the invoice date.\nPayments shall be made in CHF by bank transfer to the account stated on the\ninvoice.",
+          "quote_recomputed_from_canonical": "Clause 7.2 Payment terms\nThe Buyer shall pay each undisputed invoice within 30 days of the invoice date.\nPayments shall be made in CHF by bank transfer to the account stated on the\ninvoice.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "331eaeda4c5f4da7",
+          "document_id": "9f84ec4d54d34f0c",
+          "page": 1,
+          "start_offset": 298,
+          "end_offset": 429,
+          "quote_from_application": "Clause 2\nInvoices issued before the effective date of this amendment remain payable\nunder the terms in force on their invoice date.",
+          "quote_recomputed_from_canonical": "Clause 2\nInvoices issued before the effective date of this amendment remain payable\nunder the terms in force on their invoice date.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "53c511898a564486",
+          "document_id": "b703950b0a74445b",
+          "page": 1,
+          "start_offset": 342,
+          "end_offset": 531,
+          "quote_from_application": "Clause 7.2 Payment terms\nThe Buyer shall pay each undisputed invoice within 30 days of the invoice date.\nPayments shall be made in CHF by bank transfer to the account stated on the\ninvoice.",
+          "quote_recomputed_from_canonical": "Clause 7.2 Payment terms\nThe Buyer shall pay each undisputed invoice within 30 days of the invoice date.\nPayments shall be made in CHF by bank transfer to the account stated on the\ninvoice.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "53c511898a564486",
+          "document_id": "2b958ac3ea604fe6",
+          "page": 1,
+          "start_offset": 501,
+          "end_offset": 615,
+          "quote_from_application": "Payment terms: payable within 30 days of the invoice date, as stated in Clause\n7.2 of the Master Supply Agreement.",
+          "quote_recomputed_from_canonical": "Payment terms: payable within 30 days of the invoice date, as stated in Clause\n7.2 of the Master Supply Agreement.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "226de5ef848a4fb1",
+          "document_id": "b703950b0a74445b",
+          "page": 1,
+          "start_offset": 342,
+          "end_offset": 531,
+          "quote_from_application": "Clause 7.2 Payment terms\nThe Buyer shall pay each undisputed invoice within 30 days of the invoice date.\nPayments shall be made in CHF by bank transfer to the account stated on the\ninvoice.",
+          "quote_recomputed_from_canonical": "Clause 7.2 Payment terms\nThe Buyer shall pay each undisputed invoice within 30 days of the invoice date.\nPayments shall be made in CHF by bank transfer to the account stated on the\ninvoice.",
+          "offsets_reproduce_quote": true
+        },
+        {
+          "finding_id": "226de5ef848a4fb1",
+          "document_id": "9f84ec4d54d34f0c",
+          "page": 1,
+          "start_offset": 135,
+          "end_offset": 296,
+          "quote_from_application": "Clause 1\nClause 7.2 of the Master Supply Agreement is amended. The payment period for\nundisputed invoices is changed from 30 days to 45 days of the invoice date.",
+          "quote_recomputed_from_canonical": "Clause 1\nClause 7.2 of the Master Supply Agreement is amended. The payment period for\nundisputed invoices is changed from 30 days to 45 days of the invoice date.",
+          "offsets_reproduce_quote": true
+        }
+      ]
+    },
+    "candidate_coverage": {
+      "claims": 21,
+      "documents": 4,
+      "pairs_considered": 12,
+      "pairs_after_dedup": 8,
+      "pairs_compared": 8,
+      "pairs_dropped_by_cap": 0,
+      "pairs_skipped": 198,
+      "skipped_reasons_top": {
+        "same document": 51,
+        "different predicates (payment_period vs effective_date)": 12,
+        "different predicates (amount vs payment_period)": 12,
+        "different predicates (effective_date vs payment_period)": 9,
+        "different predicates (effective_date vs amount)": 6,
+        "different predicates (payment_period vs amount)": 6,
+        "different predicates (approval_condition vs payment_period)": 5,
+        "different predicates (currency vs payment_period)": 5,
+        "different predicates (term_end vs payment_period)": 4,
+        "different predicates (scope vs payment_period)": 4,
+        "different predicates (dispute_window vs payment_period)": 4,
+        "different predicates (other:supplier vs payment_period)": 4
+      },
+      "skipped_reasons_other_count": 76,
+      "distinct_skip_reasons": 59,
+      "unknown_scope_candidates_kept": 4
+    },
+    "failures": [],
+    "limitations": [
+      "Prototype: results are potential inconsistencies for human review, not a factual or legal determination.",
+      "6 of 23 model claims could not be resolved to a validated source span and are shown as unresolved"
+    ],
+    "claims_about_this_bundle": [
+      "Results are potential inconsistencies for human review, not a factual or legal determination.",
+      "CSCS-hosted inference is external-network inference; a local web app calling CSCS is not air-gapped.",
+      "This bundle contains no credential value; the credential field is a masked form only."
+    ]
+  },
+  "credential_audit": {
+    "files_scanned": 126,
+    "hits": [],
+    "clean": true,
+    "hermes_copies_in_repo": []
+  }
+}

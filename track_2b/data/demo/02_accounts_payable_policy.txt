@@ -1,0 +1,18 @@
+HELVETIA PRAEZISION GMBH - ACCOUNTS PAYABLE POLICY
+
+Document owner: Finance Operations
+Effective date: 2026-01-01
+Applies to: all supplier invoices, including invoices received from Nordwind
+Logistik AG under the master supply agreement.
+
+Policy 4.1 Standard settlement period
+All supplier invoices are settled within 60 days of the invoice date. Finance
+Operations processes the payment run on the last working day of each month.
+
+Policy 4.4 Invoice approval
+An invoice is released for payment only after three-way matching against the
+purchase order and the goods receipt record has been completed.
+
+Policy 6.2 Currency
+Supplier invoices are recorded in Swiss francs (CHF). Foreign-currency invoices
+are converted at the Swiss National Bank reference rate on the invoice date.

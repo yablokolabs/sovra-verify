@@ -1,0 +1,10 @@
+-r requirements.txt
+pytest==8.3.4
+pytest-timeout==2.3.1
+# Documentation tooling, not runtime dependencies of the application.
+# `markdown` converts the technical report to HTML and `pypdf` verifies the
+# rendered PDF: body page count, and that no page carries a running footer or
+# bottom page-number block. `scripts/check_no_footer.py` needs `pypdf` to include
+# PDF pages in its scan and reports the omission when it is missing.
+markdown==3.11
+pypdf==6.20.0

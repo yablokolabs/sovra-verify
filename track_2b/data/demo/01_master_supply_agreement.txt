@@ -1,0 +1,29 @@
+MASTER SUPPLY AGREEMENT
+
+Parties: Nordwind Logistik AG (Supplier) and Helvetia Praezision GmbH (Buyer)
+Effective date: 2026-01-01
+Term: until 2028-12-31
+
+Clause 4.1 Scope
+This agreement governs all road-freight logistics services supplied by Nordwind
+Logistik AG to Helvetia Praezision GmbH under purchase orders referencing this
+agreement.
+
+Clause 7.2 Payment terms
+The Buyer shall pay each undisputed invoice within 30 days of the invoice date.
+Payments shall be made in CHF by bank transfer to the account stated on the
+invoice.
+
+Clause 7.5 Expedited freight exception
+Invoices issued under the expedited freight programme described in Schedule C
+are payable within 10 days of the invoice date. Clause 7.2 does not apply to
+those invoices.
+
+Clause 9.3 Currency
+All amounts are stated in Swiss francs (CHF). Amounts invoiced in another
+currency are converted at the Swiss National Bank reference rate on the invoice
+date.
+
+Clause 11.2 Disputed invoices
+The Buyer may withhold payment of a disputed amount provided it notifies the
+Supplier in writing within 10 days of receipt of the invoice.

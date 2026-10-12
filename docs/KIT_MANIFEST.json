@@ -1,0 +1,14 @@
+{
+  "kind": "Documentation build kit; no application evidence",
+  "files": {
+    "AGENTS.md": "83aeffb8b511a786bfde4267c096103eea17586bbc08d54d453e596780852d4b",
+    "FREEBUFF_PROMPT.md": "5a30df3ebd9a84480822e89ec4d5f6d89e7da446f2a401d1738dad102201d25f",
+    "README.md": "8444485aec7be61bb2af90271db67a09ed58a0e02d4f395381fd208e9ee465e0",
+    "SESSION_CONTINUATION.md": "deb99d487fae71cf0e0714c5324722bc9e5be61a0ad1c3a86f6bf8c08bb86e05",
+    "SOVRA_BUILD.md": "d9da828354d6f350066158cdfb9ea964d611dcbb15bc073ffc741fc7c4956f9b",
+    "docs/BUILT_WITH.md": "f8a375d9474626533c7a3d4681dfbf956d735934c632b255b19aea79e4771b57",
+    "docs/COMPETITION_NOTES.md": "493dd864d1bdc59cf20ac960912106389351cdcd53836011f5518652e7fdf91b",
+    "docs/DEVPOST_PROJECT_STORY.md": "98b29256074089c3cf1cc51566d0f49dc45e64eab3048d09e0b7df048856aa08",
+    "docs/PROGRESS.md": "46d46d22c2fd4fb8de003954eab7e368f5c11cc2f61ed468545a0db92c58c93d"
+  }
+}
