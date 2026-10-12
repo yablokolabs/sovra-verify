@@ -77,6 +77,10 @@ EXCLUDED_DIRS: frozenset[str] = frozenset(
         ".sovra_work",
         ".sovra_work_test",
         ".hermes",
+        # Local state an editor or MCP tool keeps for itself. It is regenerated on
+        # any machine that runs the tool, it is not part of the submission, and it
+        # had already slipped into one built archive before this entry existed.
+        ".serena",
     }
 )
 

@@ -530,15 +530,21 @@ Command / exit code / result:
   digest check over docs/KIT_MANIFEST.json -> all 8 recorded hashes match the files on disk
   make test -> EXIT 0, 265 passed, 1 skipped
   make no-footer -> EXIT 0, PASS (the allowlist summary no longer names the removed file)
-  make audit -> EXIT 0, 153 publishable files (154 before the removal)
-  scripts/package_submission.py -> EXIT 0, 153 members, re-opened and audited; the archive no longer
-      contains the prompt and every member hash was compared against the working tree
+  make audit -> EXIT 0, 153 publishable files at that point (154 before the removal)
+  scripts/package_submission.py -> EXIT 0, 153 members, re-opened and audited
 Model / provider / mode / usage: none (repository surgery and documentation only; no inference)
-Blocker: none
+Blocker: location = the built archive, then scripts/audit_secrets.py EXCLUDED_DIRS
+  → cause = listing the archive turned up three `.serena/` members. The packable set is not computed from
+    git's ignore rules but by walking the tree and applying that exclusion list, so a tool directory git
+    already ignored in this commit was still packed; an earlier archive had carried two of those files as
+    well, and nothing in the audit objected because they hold no credential.
+  → fix = `.serena` added to EXCLUDED_DIRS with the reason, the archive rebuilt, and the members verified
+    absent. Audited after the fix: 150 publishable files, 150 members, no `.serena` and no prompt file
+    inside, every member hash compared against the working tree.
 No-footer inspection: PASS over source, the built bundle, every served route, all report PDF pages and
   every generated export
 Story/tag claim changes: none; the story never named the prompt file
-One exact next action: none — the tree, the checks and the archive agree on the same 153 files.
+One exact next action: none — the tree, the checks and the archive agree on the same 150 files.
 Recovery: the removed file is one command away from any clone —
   git show 1e134ef:FREEBUFF_PROMPT.md > FREEBUFF_PROMPT.md
 ```
