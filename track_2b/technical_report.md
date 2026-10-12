@@ -108,7 +108,12 @@ difference are deduplicated so one conflict is reported once. Coverage statistic
 pairs after deduplication, pairs compared, pairs dropped by cap, and the top reasons pairs were
 skipped — are stored on the analysis, so a retrieval miss cannot hide. A differing known effective
 date is treated as an explanation rather than a conflict, and the number of pairs skipped for that
-reason is reported so the reader can audit the choice.
+reason is reported so the reader can audit the choice. These statements are made on screen, in the
+candidate-coverage notice, and they are verified where a reviewer would read them: `make ui-check`
+drives the running interface in a headless browser and asserts that a compared pair's judged outcome
+is stated, that a completed run reporting nothing says so, and that no footer marker is present in
+the rendered text or the DOM. Over the four-document demo corpus that run compared 11 pairs and the
+panel read "11 compared pair(s) were judged: 10 potential conflict, 1 consistent".
 
 **Imported documents are data.** Prompt templates state that passage text is untrusted user data
 which cannot alter the task, the output format, the provider or the tools. No tool, network request,

@@ -375,6 +375,62 @@ Story/tag claim changes: "What we learned" now carries the negative result; tags
 One exact next action: commit and push the corrected claims and the measured negative result.
 ```
 
+## Checkpoint M6-1 — the interface is verified on a live screen, not only in source
+
+```
+Timestamp / checkpoint ID:   2026-10-12 19:30 IST / M6-1
+Milestone / branch / commit: M6 / main / pending
+Actual implemented behavior:
+  scripts/browser_check.py drives the running dashboard in lightpanda (a headless browser whose
+  `serve` subcommand exposes the Chrome DevTools Protocol) with nothing injected and no request
+  answered locally, then asserts on what the page renders: the interface finished loading its own
+  data; the candidate-coverage notice exists and, when pairs were compared, states how they were
+  judged; a completed run that reported nothing says so in words; the prototype warning sits next to
+  the controls; and neither the rendered text nor the DOM that produced it carries a footer marker
+  from scripts/check_no_footer.py's own list. Screenshots and a JSON record are written out.
+  `make ui-check` is the no-inference form and `make ui-check-full` clicks "Select all" and "Analyse
+  corpus with Apertus" and waits for a real run.
+Command / exit code / result:
+  make ui-check                      -> EXIT 0 (no inference): 4 documents offered, provider
+      reachable, no run on screen so the coverage contract is reported as NOT EXERCISED rather than
+      passed, no footer marker in 2,302 rendered characters or 6,514 DOM characters
+  make ui-check-full (real inference) -> EXIT 0
+      round trip 83.92 s; 56 provider calls, 132,521 tokens, 336.2 s accumulated latency, 0 failed
+      run summary: complete, Apertus comparison, prompt sovra-prompts-4, 33 claims, 11 pairs
+      coverage on screen: 11 compared pair(s) were judged: 10 potential conflict, 1 consistent
+      footer scan: no marker in 13,362 rendered characters or 32,733 DOM characters
+      screenshots: docs/demo/screenshots/01-corpus.png, 02-findings.png (both 1500x3000, different
+      hashes, 0.0240 vs 0.0275 ink share, so the run is visibly the difference between them)
+  repeat of that run                  -> EXIT 0, 0.51 s round trip; the API answers a repeat of the
+      same document set from its own stored run, which is why the delivered
+      track_2b/data/evaluation/UI_RENDER.json is a repeat and its usage summary is the run's own
+  make test                          -> EXIT 0, 260 passed, 1 skipped (12 new tests in
+      track_2b/tests/unit/test_browser_check.py cover the coverage contract's branches, the footer
+      hit list and the JavaScript-literal escaping, without needing a browser)
+  make no-footer                     -> EXIT 0; make audit -> EXIT 0, 150 publishable files
+  make report-pdf                    -> EXIT 0, 4 body pages (limit 6), 0 footer fragments
+Model / provider / mode / usage:
+  cscs / swiss-ai/Apertus-v1.5-70B / claims+compare through the interface
+  spend this session: three live interface runs — 42 calls / 99,395 tokens, 56 calls / 132,521 tokens,
+  and one whose HTTP response the browser aborted before the fix below (28 calls / 66,274 tokens);
+  0 failed calls in all three
+Blocker: location = scripts/browser_check.py and the run it drives
+  → cause = lightpanda's HTTP timeouts default to 15,000 ms for a transfer and 8,000 ms to connect.
+    The analysis endpoint is synchronous and sends nothing for over a minute, so the browser aborted
+    the POST, the page kept its empty state, and the check waited for a finish that had already
+    happened server-side — a hang that looked like a slow model rather than a failed request.
+  → fix = the browser is started with --http-timeout 900000 --http-connect-timeout 30000, the wait
+    loop reports progress every 30 s, and a capture is bounded by its own timeout. Verified by the
+    next run returning in 83.92 s and rendering the run. The page's getBoundingClientRect and
+    scrollHeight answers 100000000 for every element, so the capture uses a fixed 1500x3000 viewport
+    rather than measuring the document.
+No-footer inspection: PASS over source, built bundle, every served route, all 5 report PDF pages,
+  every generated export, and now the live DOM of the rendered dashboard
+Story/tag claim changes: story gained the browser-verification paragraphs and the corrected test
+  count (260); Built With gained one honest tag (lightpanda, 22 of 25) plus its role and evidence
+One exact next action: commit and push the browser check, its tests, the screenshots and the docs.
+```
+
 ## Checkpoint template
 
 ```text

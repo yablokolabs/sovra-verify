@@ -1,6 +1,6 @@
 # Built With
 
-**Listed tags: 21 of an allowed 25.** Every one is a technology that is actually present in this
+**Listed tags: 22 of an allowed 25.** Every one is a technology that is actually present in this
 repository and was used to produce the delivered artifacts. Nothing is listed because it sounds
 impressive, and the section at the end names what was deliberately left out and why - those names
 are explanations, not tags.
@@ -22,6 +22,12 @@ and audio plan are under `videos/`.
 
 **`elevenlabs`** — generated the demonstration narration with `eleven_multilingual_v2`.
 
+**`lightpanda`** — a headless browser that rendered the running interface so the sentences a reviewer
+reads could be checked on a live screen rather than inferred from source, and produced the two
+screenshots under `docs/demo/screenshots/`. Its CDP server is driven by `scripts/browser_check.py`
+(`make ui-check`). It is a development tool: the application neither depends on it nor ships it, and
+the check skips cleanly when it is absent.
+
 ## Applied as previously established practice
 
 `python`, `fastapi`, `pydantic`, `sqlite`, `docker`, `pytest`, `react`, `typescript`, `vite`,
@@ -39,6 +45,7 @@ and audio plan are under `videos/`.
 | `diagram-design` | Architecture diagram source |
 | `docker` | Packaging and the documented `make run` entry point |
 | `pymupdf` | Text-native PDF extraction (license reviewed before adoption) |
+| `lightpanda` | Development tooling only: renders the running interface for `make ui-check` and for the delivery screenshots. Not installed with, or called by, the application. |
 | `pypdf` | Development tooling only: measures the rendered report's page count and page edges so the no-footer rule can be checked on a PDF rather than hoped for. Not installed in the application image. |
 
 ## Deliberately not listed
@@ -58,7 +65,9 @@ of this size, so no vector database was adopted.
   (11 calls, 0 failed, 16 citations re-derived from canonical text)
 - Evaluation ledger: `track_2b/data/evaluation/RESULTS.json` (`provider_ledger`) with a measured
   accuracy of 0.36 over 25 cases — reported as measured, not as a target met
-- Release checks: `make audit` (secret and forbidden-file gate) and `make no-footer`
+- Release checks: `make audit` (secret and forbidden-file gate), `make no-footer`, and `make ui-check`
+  (the same footer rule plus the coverage sentences, checked on a real browser render; the record is
+  `track_2b/data/evaluation/UI_RENDER.json` and the screenshots are `docs/demo/screenshots/`)
 - Python dependencies: `track_2b/backend/requirements.txt`
 - Frontend dependencies: `track_2b/frontend/package.json`
 - Video toolchain: `videos/package.json`, `videos/videos/sovra_demo/`

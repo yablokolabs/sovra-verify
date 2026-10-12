@@ -1,0 +1,143 @@
+{
+  "analyse_button": {
+    "disabled_before_selection": true,
+    "text": "Analyse corpus with Apertus"
+  },
+  "analysis_round_trip_seconds": 0.51,
+  "base_url": "http://127.0.0.1:8098",
+  "browser": {
+    "binary": "/home/azureuser/.local/bin/lightpanda",
+    "connect_timeout_ms": 30000,
+    "http_timeout_ms": 900000,
+    "product": "Lightpanda/1.0",
+    "version": "1.0.0-nightly.9427+5163c6d38"
+  },
+  "clicked": "Analyse corpus with Apertus",
+  "control_enabled_after_selection": true,
+  "documents": [
+    "04_amendment_2.txt",
+    "03_invoice_INV-2026-0417.txt",
+    "02_accounts_payable_policy.txt",
+    "01_master_supply_agreement.txt"
+  ],
+  "footer_scan": {
+    "dom_characters": 32733,
+    "dom_markers": [],
+    "markers": [],
+    "rendered_characters": 13456,
+    "text_markers": []
+  },
+  "load_seconds": 0.51,
+  "notes": [
+    "The page is rendered by a real browser; nothing is stubbed, so what the evidence describes is what a reviewer sees.",
+    "The application answers a repeated analysis of the same document set from its own stored run, so the round trip can be short. The usage summary is the displayed run's record of provider calls, tokens and accumulated latency.",
+    "Screenshots are pixels, not assertions: the assertions are the rendered-text checks and the footer scan above."
+  ],
+  "provider_reachable": true,
+  "rendered": {
+    "buttons": [
+      "Upload",
+      "Select all",
+      "Clear selection",
+      "Analyse corpus with Apertus",
+      "Extract claims only (no Apertus reasoning)",
+      "Previous finding",
+      "Next finding",
+      "Potential conflictPending review2 validated span(s)Claim A states payment is due within 30 days of the invoice date, while Claim B states the standard settlement period is 60 days for all supplier invoices.Claims: claim-12-0f0b0f411f6e4ff2, 23803f9bb92e4d5f-rule-2 \u00b7 Provider run: a80a389f305f44bb",
+      "Potential conflictPending review2 validated span(s)Claim A states payment is due within 30 days, while Claim B states payment is due within 10 days.Claims: claim-12-0f0b0f411f6e4ff2, 151c041cc4a74caa-rule-6 \u00b7 Provider run: 862ee687860d48ab",
+      "Potential conflictPending review2 validated span(s)Claim A specifies a payment term of 30 days for undisputed invoices, while Claim B specifies a standard settlement period of 60 days for all supplier invoices.Claims: claim-21-151c041cc4a74caa, 23803f9bb92e4d5f-rule-2 \u00b7 Provider run: 9af8f6a5b0244b27",
+      "Potential conflictPending review2 validated span(s)Claim A specifies a 10-day payment term for expedited freight invoices, while Claim B amends the general undisputed invoice term to 45 days. These values are incompatible for the same subject without an exception.Claims: claim-24-151c041cc4a74caa, 9f802e4172684caa-rule-2 \u00b7 Provider run: 6c1398f2a90840fd",
+      "Potential conflictPending review2 validated span(s)Claim A specifies a payment term of within 10 days for expedited freight invoices, while Claim B specifies a standard settlement period of 60 days for all supplier invoices.Claims: claim-24-151c041cc4a74caa, 23803f9bb92e4d5f-rule-2 \u00b7 Provider run: 2e07bb8edb5c4c08",
+      "Potential conflictPending review2 validated span(s)Claim A states a payment period of 45 days while Claim B states a payment period of 60 days, representing different values for the same predicate.Claims: 9f802e4172684caa-rule-2, 23803f9bb92e4d5f-rule-2 \u00b7 Provider run: 02541e46cf3a464d",
+      "Potential conflictPending review2 validated span(s)Claim A states a payment period of 30 days, while Claim B states a payment period of 10 days.Claims: 9f802e4172684caa-rule-2, 151c041cc4a74caa-rule-6 \u00b7 Provider run: bdc1c88de1cc4518",
+      "Potential conflictPending review2 validated span(s)Claim A states a payment period of 60 days, while Claim B states a payment period of 10 days.Claims: 23803f9bb92e4d5f-rule-2, 151c041cc4a74caa-rule-6 \u00b7 Provider run: 46ff46c962a545e0",
+      "Potential conflictPending review2 validated span(s)Claim A states payment is due within 30 days of the invoice date, while Claim B amends Clause 7.2 to change the payment period to 45 days for undisputed invoices.Claims: claim-12-0f0b0f411f6e4ff2, 9f802e4172684caa-rule-2 \u00b7 Provider run: bc3e98d7ea5e4de0",
+      "Potential conflictPending review2 validated span(s)Claim A states undisputed invoices are payable within 30 days, while Claim B amends Clause 7.2 to change the payment period to 45 days for undisputed invoices.Claims: claim-21-151c041cc4a74caa, 9f802e4172684caa-rule-2 \u00b7 Provider run: 0ac33726d2e74dc6",
+      "ConsistentPending review2 validated span(s)Both claims state that payment is due within 30 days of the invoice date for undisputed invoices under the Master Supply Agreement.Claims: claim-12-0f0b0f411f6e4ff2, claim-21-151c041cc4a74caa \u00b7 Provider run: 8c360986d19f4cfa",
+      "Confirm for review",
+      "Dismiss",
+      "Reset to pending"
+    ],
+    "coverage": [
+      "33 validated claims in the corpus",
+      "11 candidate pairs passed the scoping filter",
+      "11 pairs sent to Apertus",
+      "11 compared pair(s) were judged: 10 potential conflict, 1 consistent",
+      "10 kept candidates had an unknown scope and were reviewed rather than dropped",
+      "132 pairs skipped: same document",
+      "30 pairs skipped: different predicates (other:is vs payment_period)",
+      "18 pairs skipped: different predicates (other:is vs effective_date)",
+      "17 pairs skipped: different predicates (amount vs payment_period)"
+    ],
+    "failures": [],
+    "limitations": [
+      "Prototype: results are potential inconsistencies for human review, not a factual or legal determination.",
+      "3 of 29 model claims could not be resolved to a validated source span and are shown as unresolved",
+      "reused the previous result for the identical corpus, model and settings (idempotent analysis)"
+    ],
+    "run": {
+      "Mode": "Apertus comparison",
+      "Model": "swiss-ai/Apertus-v1.5-70B",
+      "Pairs compared": "11",
+      "Prompt version": "sovra-prompts-4",
+      "Provider": "cscs",
+      "Run status": "complete",
+      "Validated claims": "33"
+    }
+  },
+  "rendered_checks": {
+    "coverage_notice": [
+      "33 validated claims in the corpus",
+      "11 candidate pairs passed the scoping filter",
+      "11 pairs sent to Apertus",
+      "11 compared pair(s) were judged: 10 potential conflict, 1 consistent",
+      "10 kept candidates had an unknown scope and were reviewed rather than dropped",
+      "132 pairs skipped: same document",
+      "30 pairs skipped: different predicates (other:is vs payment_period)",
+      "18 pairs skipped: different predicates (other:is vs effective_date)",
+      "17 pairs skipped: different predicates (amount vs payment_period)"
+    ],
+    "judged_outcome_sentence": true,
+    "run_rendered": true
+  },
+  "run": {
+    "Mode": "Apertus comparison",
+    "Model": "swiss-ai/Apertus-v1.5-70B",
+    "Pairs compared": "11",
+    "Prompt version": "sovra-prompts-4",
+    "Provider": "cscs",
+    "Run status": "complete",
+    "Validated claims": "33"
+  },
+  "screenshots": [
+    {
+      "bytes": 184061,
+      "path": "docs/demo/screenshots/01-corpus.png",
+      "state": "corpus loaded and nothing analysed yet, at 1500x3000"
+    },
+    {
+      "bytes": 209594,
+      "path": "docs/demo/screenshots/02-findings.png",
+      "state": "after the run: the findings panel, the run summary and the coverage notice at 1500x3000"
+    }
+  ],
+  "selected": "4 of 4",
+  "settings": {
+    "Automatic backup fallback": "off \u2014 a failed primary call fails visibly instead of switching providers",
+    "Backup provider": "huggingface \u00b7 swiss-ai/Apertus-8B-Instruct-2509",
+    "Corpus limit": "10 documents \u00b7 10 MB per file",
+    "Optional 8B models": "disabled \u2014 no silent downgrade from 70B",
+    "Primary provider": "CSCS \u00b7 swiss-ai/Apertus-v1.5-70B",
+    "Provider reachability": "primary provider reachable"
+  },
+  "usage": {
+    "Accumulated latency": "336.2 s",
+    "Backup calls": "0",
+    "Completion tokens": "21,250",
+    "Failed calls": "0",
+    "Models used": "cscs:swiss-ai/Apertus-v1.5-70B",
+    "Prompt tokens": "111,271",
+    "Provider calls": "56",
+    "Total tokens": "132,521"
+  }
+}

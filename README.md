@@ -56,8 +56,10 @@ its provider, model, mode, latency, token usage and error class.
 ```bash
 make run          # documented entry point: Docker, app + API
 make run-local    # host process instead
-make test         # 248 unit, integration and end-to-end tests
+make test         # 260 unit, integration and end-to-end tests
 make evaluate     # frozen evaluation corpus against real inference
+make ui-check     # renders the app in a real browser and checks what the panel shows
+make ui-check-full # the same, driving a real analysis through the interface
 make no-footer    # footer audit over source, build output, PDF pages and every route
 make audit        # fails if a credential or a forbidden file could be published
 ```
@@ -110,6 +112,37 @@ Where the 0.36 comes from is broken down in [`docs/EVALUATION.md`](docs/EVALUATI
 25 cases ever reached the model, and it was right on 9 of those (0.6429). The other 11 were held back by
 the candidate filter and by extraction; the model's own five errors are cases where it read the
 explaining sentence, quoted it, and reported a conflict anyway.
+
+## Interface verification in a real browser
+
+Source-level tests cannot show that the dashboard renders. `make ui-check` drives the running app in
+[lightpanda](https://lightpanda.io) — a headless browser whose `serve` subcommand exposes the Chrome
+DevTools Protocol — and reads the panel a reviewer reads. `make ui-check-full` additionally clicks
+"Select all" and "Analyse corpus with Apertus" and waits for a real run.
+
+Checked from the rendered page, not from the code: the interface finished loading its own data; the
+candidate-coverage notice is present and, when pairs were compared, states how they were judged; a
+completed run that reported nothing says so in words; the prototype warning sits next to the controls;
+and no footer marker appears in the rendered text or in the DOM that produced it (the same marker
+list `make no-footer` uses). Screenshots and a machine-readable record are written to
+[`docs/demo/screenshots/`](docs/demo/screenshots) and
+[`track_2b/data/evaluation/UI_RENDER.json`](track_2b/data/evaluation/UI_RENDER.json).
+
+A full run through the interface on 2026-10-12 took **83.92 s**, made **56 provider calls** (132,521
+tokens, 336.2 s accumulated latency, 0 failed), and the panel then read: 33 validated claims, 11 pairs
+sent to Apertus, "11 compared pair(s) were judged: 10 potential conflict, 1 consistent". The delivered
+record is a repeat of that check against the run the app had already stored — the API answers a repeat
+of the same document set from its own record, so that repeat's round trip is 0.51 s while its usage
+summary is still the run's own. The live run is the one whose numbers are quoted here.
+
+One finding worth passing on to anyone automating this app: lightpanda's HTTP timeouts default to
+15 s for a transfer and 8 s to connect. The analysis endpoint is synchronous and sends nothing for
+over a minute, so a browser left at the default aborts the request and the interface never renders
+the run. `scripts/browser_check.py` starts the browser with `--http-timeout 900000` for that reason.
+
+lightpanda is not a dependency of the application and is not installed with it: the check exits with
+code 2 and says **SKIPPED** when lightpanda or a running server is missing, so the rest of the suite
+stays runnable without a browser.
 
 ## Demonstration video
 
@@ -167,7 +200,8 @@ track_2b/
   data/evaluation/    frozen labelled evaluation corpus and measured results
   tests/              unit, integration and end-to-end tests
 docs/                 progress log, evaluation, deployment, project story, built-with, diagrams
-scripts/              launch, smoke, provider verification, evaluation, proof export, footer audit
+scripts/              launch, smoke, provider verification, evaluation, proof export, footer audit,
+                      browser check (lightpanda over the Chrome DevTools Protocol)
 videos/               videowright project for the demonstration video
 ```
 
@@ -189,7 +223,9 @@ No screen, export, report or PDF carries a footer, a copyright bar, an attributi
 "powered by" line or a closing signature. Safety and prototype information sits next to the controls
 it applies to. `make no-footer` scans the source, the built frontend, generated reports and exports,
 every served route and every page of the rendered report PDF, and fails the build if a footer marker
-appears. Licensing and provenance live in dedicated files, not in a footer.
+appears. `make ui-check` applies the same marker list to a real browser render — the text a reader
+sees and the DOM that produced it — so the rule is checked on a live screen and not only in files.
+Licensing and provenance live in dedicated files, not in a footer.
 
 ## Secrets never ship
 
