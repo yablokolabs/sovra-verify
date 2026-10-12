@@ -106,6 +106,10 @@ confusion matrix, per-class precision/recall/F1, abstention rate, resolved-citat
 tokens per case. Failed requests are counted separately from correct abstentions and the denominator
 is every case in the corpus, never only the successes.
 
+Where the 0.36 comes from is broken down in [`docs/EVALUATION.md`](docs/EVALUATION.md): only 14 of the
+25 cases ever reached the model, and it was right on 9 of those (0.64). The misses are dominated by the
+candidate filter and by exception context the model was never shown, not by the model's reasoning.
+
 ## Demonstration video
 
 A two-minute narrated demo is at [`docs/demo/sovra-verify-demo.mp4`](docs/demo/sovra-verify-demo.mp4).

@@ -46,7 +46,7 @@ And we measured the result honestly: 0.36 accuracy on a 25-case frozen corpus, w
 
 ## What we learned
 
-**Retrieval, not reasoning, was the bottleneck.** Abstention, not a wrong answer, dominated the evaluation result: 11 of 25 cases were never compared because the candidate filter did not consider the pair alignable. The model was rarely the thing that failed; the pairing step was.
+**Retrieval, not reasoning, was the bottleneck.** Abstention, not a wrong answer, dominated the evaluation result: 11 of 25 cases were never compared because the candidate filter did not consider the pair alignable. Only 14 cases ever reached the model, and it was right on 9 of those. The model was rarely the thing that failed; the pairing step was, together with exception context we never showed it.
 
 **A test found the most serious bug.** The cross-document citation defect would have produced quotes from the wrong document that still looked plausible in the interface. It was caught by an assertion, not by reading the code, and it is the reason the citation check is now a required test rather than a manual inspection.
 

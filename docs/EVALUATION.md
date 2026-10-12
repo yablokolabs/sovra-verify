@@ -82,6 +82,60 @@ so the metric records a miss. That mismatch between the metric and the interface
 the interface should surface "considered and not reported" as a distinct, visible state rather than
 letting it look like a failure.
 
+## Where the 16 misses come from
+
+The single accuracy figure hides two different failures, and only one of them is the model's.
+
+| Group | Cases | What happened |
+|---|---|---|
+| Compared and correct | 9 | — |
+| Compared and misjudged | 5 | The model judged a pair and produced a false-positive conflict |
+| Never compared | 11 | No candidate pair was ever formed, so no comparison call was made at all |
+
+Of the 14 cases the model actually judged, it was right 9 times — **0.64 on the subset it was asked
+about**. All five of its errors are false-positive `potential_conflict` judgements on a case the corpus
+labels `consistent` (a stated exception) or `insufficient_evidence` (no governing context):
+
+- `eval-017`, `eval-018`, `eval-019` (`valid_exception`) — **the exception clause was never in front of
+the model.** For `eval-017` the candidate filter dropped the carve-out with the reason `same document`,
+so the comparison saw the two differing terms and not the exception that explains them.
+- `eval-020`, `eval-022` (`missing_context`) — the model asserted a conflict from fragments that state
+no entity, scope or effective date on either side.
+
+The 11 never-compared cases split further:
+
+- **8 of them are labelled `unrelated` (3) or `insufficient_evidence` (5).** For those, producing no
+  finding is the desired behaviour — but the corpus records the missing label as an error, and the
+  interface has no distinct "considered and not reported" state, so the outcome is silent rather than
+  reported. Counting those eight as correct would give 17 of 25, **0.68**. That is a definitional
+  change, not a measured improvement, and it is not claimed as one until the interface can show that
+  state to a reviewer.
+- **4 of the 11 produced only one claim**, so no pair was even possible: two `consistent` cases and one
+  `conflict` case were lost at extraction, not at pairing.
+- Across the whole corpus the skip reasons are dominated by `same document` (12 occurrences) and
+  `different predicates` (16) — the controlled-vocabulary filter refusing pairs it cannot align.
+
+So the 0.36 is not primarily a model-intelligence result. The dominant causes are the conservative
+candidate filter, the missing exception context, and a metric that scores a silent-but-correct
+negative as an error.
+
+### Three levers, with what each is worth and what it costs
+
+1. **Pass the exception context into the comparison** — the other statements of a claim's own document,
+   at least the same-predicate carve-outs. Targets `eval-017`/`018`/`019`. Ceiling +3 (0.48). Costs a
+   prompt and candidate change plus a re-run to measure.
+2. **Recover the one-claim cases at extraction** — 4 cases never had a pair to judge. Targets
+   `eval-002` (a real conflict) and `eval-007`/`008`. Ceiling +3 (0.48). Costs a schema and prompt
+   change plus a re-run.
+3. **Surface "considered and not reported"** and score the silent negatives correctly. Targets the 8
+   negative cases (0.68 when combined with the current 9 correct). Costs interface and scoring work and
+   **no inference**; it is a definitional change and both numbers must be reported.
+
+A deterministic short-cut was considered and rejected without measuring it: refusing any conflict whose
+claims lack entity, scope and effective date. `eval-001`, a correct conflict, also has no entity, scope
+or effective date in its claims, so that rule would suppress correct findings as readily as the wrong
+ones. It is not implemented.
+
 ## Honest limitations of this evaluation
 
 - **Small and synthetic.** 25 hand-written cases. This does not establish real-world performance on
