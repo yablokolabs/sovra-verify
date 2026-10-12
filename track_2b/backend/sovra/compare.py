@@ -60,6 +60,21 @@ class ComparisonOutcome:
     rejected: list[str] = field(default_factory=list)
     baseline: dict[str, str] = field(default_factory=dict)
     coverage: dict[str, object] = field(default_factory=dict)
+    #: How many compared pairs were judged each relation. A comparison that ends in
+    #: ``consistent``, ``unrelated`` or ``insufficient_evidence`` produced no
+    #: inconsistency, and that outcome has to be counted and shown rather than left
+    #: implicit in an empty finding list.
+    outcomes: dict[str, int] = field(default_factory=dict)
+    #: Comparisons that produced no usable judgement at all (unparseable output,
+    #: unknown relation, truncated response). Counted separately from an abstention.
+    without_finding: int = 0
+
+
+#: How many other statements from each claim's own document are supplied as context
+#: to a comparison. The exception that explains a difference is usually written in
+#: the same document as one of the two claims and is not itself a comparable pair,
+#: so without this it never reaches the model.
+MAX_CONTEXT_PASSAGES_PER_SIDE = 4
 
 
 def claim_keys(claim: Claim) -> tuple[str, str, str, str, str]:
@@ -203,6 +218,7 @@ class Comparer:
         passages_by_id: dict[str, Passage],
         canonical_by_document: dict[str, str],
         document_names: dict[str, str],
+        context_by_document: dict[str, list[Passage]] | None = None,
     ) -> ComparisonOutcome:
         outcome = ComparisonOutcome()
         for candidate in candidates:
@@ -215,19 +231,63 @@ class Comparer:
                     passages_by_id=passages_by_id,
                     canonical_by_document=canonical_by_document,
                     document_names=document_names,
+                    context_by_document=context_by_document or {},
                 )
             except Exception as exc:
                 outcome.rejected.append(
                     f"comparison of {candidate.left.id} / {candidate.right.id} failed "
                     f"({type(exc).__name__})"
                 )
+                outcome.without_finding += 1
                 continue
             if finding is None:
+                outcome.without_finding += 1
                 continue
             outcome.findings.append(finding)
+            outcome.outcomes[finding.relation.value] = (
+                outcome.outcomes.get(finding.relation.value, 0) + 1
+            )
         return outcome
 
     # -- internals ---------------------------------------------------------
+    def _context_rows(
+        self,
+        claim: Claim,
+        other: Claim,
+        context_by_document: dict[str, list[Passage]],
+        document_names: dict[str, str],
+    ) -> list[dict]:
+        """Other statements from this claim's own document, as comparison context.
+
+        Excludes the two claim passages themselves: those are already given as claim A
+        and claim B. Capped, so a large document cannot crowd out the claims.
+        """
+        own = context_by_document.get(claim.document_id) or []
+        exclude = {claim.source_passage_id, other.source_passage_id}
+        rows: list[dict] = []
+        for passage in own:
+            if passage.id in exclude:
+                continue
+            rows.append(
+                {
+                    "id": passage.id,
+                    "document_name": document_names.get(passage.document_id, passage.document_id),
+                    "page": passage.page,
+                    "start_offset": passage.start_offset,
+                    "end_offset": passage.end_offset,
+                    "text": passage.text[: self.settings.max_chunk_chars],
+                }
+            )
+            if len(rows) >= MAX_CONTEXT_PASSAGES_PER_SIDE:
+                break
+        return rows
+
+    @staticmethod
+    def _render_context(rows: list[dict]) -> str:
+        if not rows:
+            return "- none: this document carries no other extracted statement"
+        return render_passages(rows)
+
     def _compare_one(
         self,
         *,
@@ -236,7 +296,9 @@ class Comparer:
         passages_by_id: dict[str, Passage],
         canonical_by_document: dict[str, str],
         document_names: dict[str, str],
+        context_by_document: dict[str, list[Passage]] | None = None,
     ) -> Finding | None:
+        context_by_document = context_by_document or {}
         rows = []
         for claim in (candidate.left, candidate.right):
             passage = passages_by_id.get(claim.source_passage_id)
@@ -253,11 +315,27 @@ class Comparer:
                 }
             )
 
+        context_a = self._context_rows(
+            candidate.left, candidate.right, context_by_document, document_names
+        )
+        context_b = self._context_rows(
+            candidate.right, candidate.left, context_by_document, document_names
+        )
+        # Context passages are citable, so they are added to the available-passage list
+        # as well as rendered as context. Only one copy of each passage id is listed.
+        context_rows: list[dict] = []
+        for row in context_a + context_b:
+            if any(existing["id"] == row["id"] for existing in context_rows):
+                continue
+            context_rows.append(row)
+
         user = COMPARE_USER_TEMPLATE.format(
             preamble=UNTRUSTED_PREAMBLE,
             claim_a=_render_claim(candidate.left, document_names),
             claim_b=_render_claim(candidate.right, document_names),
-            passages=render_passages(rows),
+            context_a=self._render_context(context_a),
+            context_b=self._render_context(context_b),
+            passages=render_passages(rows + context_rows),
         )
         context = "|".join(
             f"{doc_id}:{text[:256]}" for doc_id, text in sorted(canonical_by_document.items())

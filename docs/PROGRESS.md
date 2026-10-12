@@ -21,6 +21,7 @@ Nothing has been submitted to the hackathon portal, and no further external acti
 - [x] M2: dashboard, review and export, no-footer inspection.
 - [x] M3: evaluation harness, Docker packaging, provider verification, demonstration video.
 - [x] M4: technical report PDF, evidence bundle, provider re-verification, submission archive.
+- [x] M5: evaluation decomposition, comparison context, and an honest negative result on the fix.
 - [x] Publication: public repository at `https://github.com/yablokolabs/sovra-verify`, authorized by the
 owner and verified public with 143 files and no credential or work file among them.
 - [ ] Submission to the hackathon portal: **not done.**
@@ -326,6 +327,48 @@ No-footer inspection: PASS immediately before the commit (source, built output, 
   all 5 report PDF pages) and PASS over every generated export
 Story/tag claim changes: none
 One exact next action: submit to the hackathon portal when the owner says so; nothing is submitted yet.
+```
+
+## Checkpoint M5-1 — accuracy investigated: two changes made, measured, and reported as no gain
+
+```
+Timestamp / checkpoint ID:   2026-10-12 18:55 IST / M5-1
+Milestone / branch / commit: M5 / main / pending
+Actual implemented behavior:
+  (a) a comparison now receives the other extracted statements of each claim's own document
+      (compare.Comparer, MAX_CONTEXT_PASSAGES_PER_SIDE=4), and the claim prompt asks for every
+      distinct statement in a passage, including a stated exception or superseding date
+      (PROMPT_VERSION -> sovra-prompts-4)
+  (b) every compared pair is counted by the relation it was given: candidate_coverage gains
+      outcomes, comparisons_without_finding and inconsistencies_reported; the interface states that
+      outcome, and a run that reports nothing says so explicitly
+  (c) evaluate.py reports accuracy_on_compared_cases, the negative-case clean rate and a diagnostics
+      block of case ids, without redefining accuracy
+Command / exit code / result:
+  pytest track_2b/tests -q                 -> EXIT 0, 247 passed, 1 skipped
+  npx tsc --noEmit; npm run build          -> EXIT 0, 174.03 kB js / 7.63 kB css
+  make evaluate (real inference)           -> EXIT 0
+      cases 25, correct 9, accuracy 0.36          <- UNCHANGED from sovra-prompts-3
+      compared cases 14 of 25; accuracy on compared cases 0.6429
+      negative cases 10; no inconsistency reported on 8; clean rate 0.80
+      false alarms 2 (eval-020, eval-022); missed inconsistency 1 (eval-002)
+      provider calls 41 (0 failed), 158.3 s, 37,550 tokens, mean 1,502 per case
+      diagnostics: never_compared 11, false_alarm 2, missed_inconsistency 1, silent_negative 8
+  make report-pdf                          -> EXIT 0, 4 body pages (limit 6), 0 footer fragments
+Model / provider / mode / usage:
+  cscs / swiss-ai/Apertus-v1.5-70B / claims+compare / 41 calls, 0 failed
+Blocker: location = docs/EVALUATION.md, the attributed cause of the five false positives
+  → cause = we had written that the exception clause never reached the model, inferred from a
+    "same document" skip reason without checking which passage held the clause. The re-run produced
+    the model's own cited spans: for eval-018 it quoted "as an exception to Policy 4.1" and still
+    called the values incompatible, and for eval-022 it wrote that no exception or effective date was
+    provided to reconcile the discrepancy and reported a conflict anyway → fix = the claim is
+    corrected in EVALUATION.md, the technical report and the story, with those spans as the evidence.
+    The measured result of the two changes is stated as no gain, not as an improvement.
+No-footer inspection: PASS over source, built bundle, every served route, all 5 report PDF pages and
+  every generated export
+Story/tag claim changes: "What we learned" now carries the negative result; tags unchanged
+One exact next action: commit and push the corrected claims and the measured negative result.
 ```
 
 ## Checkpoint template

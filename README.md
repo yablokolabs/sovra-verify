@@ -56,7 +56,7 @@ its provider, model, mode, latency, token usage and error class.
 ```bash
 make run          # documented entry point: Docker, app + API
 make run-local    # host process instead
-make test         # 234 unit, integration and end-to-end tests
+make test         # 247 unit, integration and end-to-end tests
 make evaluate     # frozen evaluation corpus against real inference
 make no-footer    # footer audit over source, build output, PDF pages and every route
 make audit        # fails if a credential or a forbidden file could be published
@@ -107,8 +107,9 @@ tokens per case. Failed requests are counted separately from correct abstentions
 is every case in the corpus, never only the successes.
 
 Where the 0.36 comes from is broken down in [`docs/EVALUATION.md`](docs/EVALUATION.md): only 14 of the
-25 cases ever reached the model, and it was right on 9 of those (0.64). The misses are dominated by the
-candidate filter and by exception context the model was never shown, not by the model's reasoning.
+25 cases ever reached the model, and it was right on 9 of those (0.6429). The other 11 were held back by
+the candidate filter and by extraction; the model's own five errors are cases where it read the
+explaining sentence, quoted it, and reported a conflict anyway.
 
 ## Demonstration video
 

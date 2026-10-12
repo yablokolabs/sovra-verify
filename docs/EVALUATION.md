@@ -18,8 +18,8 @@ hand-written synthetic text; there is no real company, person or document, and n
 ## Measured result
 
 ```
-run_status: complete          duration: 133.5 s
-cases: 25                     provider calls: 39 (0 failed)
+run_status: complete          duration: 158.3 s
+cases: 25                     provider calls: 41 (0 failed)
 ```
 
 | Expected \ observed | consistent | potential_conflict | insufficient_evidence | unrelated | abstained | failed |
@@ -41,10 +41,15 @@ cases: 25                     provider calls: 39 (0 failed)
 | Accuracy | **0.36** (9 of 25) |
 | Abstention rate | **0.44** (11 of 25) |
 | Failed requests | **0.00** (0 of 25) — counted separately from abstentions |
-| Resolved citation rate on conflict findings | **100 %** (11 of 11 conflicts carried at least one resolved span) |
-| Evidence spans kept | 28 |
-| Latency per case | mean 5,076.6 ms, median 5,392 ms, max 8,788 ms |
-| Tokens per case | mean 1,259.5, total 31,487 |
+| Resolved citation rate on conflict findings | **100 %** (12 of 12 conflicts carried at least one resolved span) |
+| Evidence spans kept | 31 |
+| Latency per case | mean 5,541.6 ms, median 5,581 ms, max 10,518 ms |
+| Tokens per case | mean 1,502.0, total 37,550 |
+| Cases that ever reached the model | **14 of 25** — the other 11 formed no candidate pair |
+| Accuracy on the cases the model was asked about | **0.6429** (9 of 14) |
+| Cases whose expected relation is a negative, with no inconsistency reported | **0.80** (8 of 10) — the absence of a false alarm, not evidence of correctness |
+| False alarms (expected a negative, reported a conflict) | **2** (`eval-020`, `eval-022`) |
+| Missed inconsistencies (expected a conflict, reported nothing) | **1** (`eval-002`) |
 
 Per-category accuracy: adversarial 100 %, conflict 75 %, consistent 50 %, valid_exception 25 %,
 date_change 0 %, missing_context 0 %, unrelated_entity 0 %.
@@ -65,15 +70,21 @@ Conflicts are the strongest class: recall 0.857 with 100 % of reported conflicts
 citation. That is the design working as intended: a conflict without a validated span is discarded,
 so reported conflicts are cited.
 
-Precision on conflicts is 0.545: 5 false positives. Those are the exception and date-change cases,
-where the model called an explained difference a conflict. Two distinct causes are visible in the
-per-case rows:
+Precision on conflicts is 0.545: 5 false positives, all of them the model calling a difference a
+conflict that the corpus explains. An earlier version of this document attributed them to the
+exception clause never reaching the model. **That was wrong, and the model's own output disproves
+it.** The comparison prompt carries both claim passages in full, and the model cited the exception
+sentence as its own evidence before judging against it:
 
-1. `valid_exception` cases lose the clause that states the exception, because the exception clause and
-   the differing term usually live in the same document, and two claims from the same document are
-   never paired. The comparison therefore cannot see the carve-out it is being asked to respect.
-2. `date_change` cases that do reach comparison are judged on the values alone when the effective
-   dates were not extracted as `unknown` versus known.
+| Case | The text the model itself quoted | What the model concluded |
+|---|---|---|
+| `eval-018` | "Expedited freight invoices accepted under Schedule C are settled within 10 days, **as an exception to Policy 4.1**." | `potential_conflict`: "These values are incompatible for the same predicate without an exception noted in Claim A." |
+| `eval-019` | "Purchase order PO-4471 **states otherwise**: this order is settled within 45 days." | `potential_conflict`: "...incompatible for the same predicate without an exception." |
+| `eval-020` | "Payment within 30 days." / "Payment within 60 days." | `potential_conflict` — although the prompt says to use `insufficient_evidence` when the governing context is missing |
+| `eval-022` | "The period is 60 days." / "The period is 30 days." | `potential_conflict` — "no exception or effective date difference is provided to reconcile this discrepancy", i.e. it noticed the missing context and reported a conflict anyway |
+
+These four failures are the model's judgement on evidence it had read and quoted. They are not a
+retrieval miss and not a context gap, and passing more context cannot repair them.
 
 `insufficient_evidence` and `unrelated` score 0.00 recall because the system abstains rather than
 emitting those relations for most of their cases. Abstention is arguably the honest behaviour for an
@@ -92,15 +103,15 @@ The single accuracy figure hides two different failures, and only one of them is
 | Compared and misjudged | 5 | The model judged a pair and produced a false-positive conflict |
 | Never compared | 11 | No candidate pair was ever formed, so no comparison call was made at all |
 
-Of the 14 cases the model actually judged, it was right 9 times — **0.64 on the subset it was asked
-about**. All five of its errors are false-positive `potential_conflict` judgements on a case the corpus
-labels `consistent` (a stated exception) or `insufficient_evidence` (no governing context):
+Of the 14 cases the model actually judged, it was right 9 times — **0.6429 on the subset it was asked
+about**. All five of its errors are false-positive `potential_conflict` judgements:
 
-- `eval-017`, `eval-018`, `eval-019` (`valid_exception`) — **the exception clause was never in front of
-the model.** For `eval-017` the candidate filter dropped the carve-out with the reason `same document`,
-so the comparison saw the two differing terms and not the exception that explains them.
+- `eval-017`, `eval-018`, `eval-019` (`valid_exception`) — the corpus expects `consistent` because the
+  second statement declares itself an exception or an override. The model read that declaration,
+  quoted it as evidence, and reported a conflict anyway.
 - `eval-020`, `eval-022` (`missing_context`) — the model asserted a conflict from fragments that state
-no entity, scope or effective date on either side.
+  no entity, scope or effective date on either side, which the prompt tells it to answer
+  `insufficient_evidence`.
 
 The 11 never-compared cases split further:
 
@@ -119,22 +130,41 @@ So the 0.36 is not primarily a model-intelligence result. The dominant causes ar
 candidate filter, the missing exception context, and a metric that scores a silent-but-correct
 negative as an error.
 
-### Three levers, with what each is worth and what it costs
+### What was tried, and what it measured
 
-1. **Pass the exception context into the comparison** — the other statements of a claim's own document,
-   at least the same-predicate carve-outs. Targets `eval-017`/`018`/`019`. Ceiling +3 (0.48). Costs a
-   prompt and candidate change plus a re-run to measure.
-2. **Recover the one-claim cases at extraction** — 4 cases never had a pair to judge. Targets
-   `eval-002` (a real conflict) and `eval-007`/`008`. Ceiling +3 (0.48). Costs a schema and prompt
-   change plus a re-run.
-3. **Surface "considered and not reported"** and score the silent negatives correctly. Targets the 8
-   negative cases (0.68 when combined with the current 9 correct). Costs interface and scoring work and
-   **no inference**; it is a definitional change and both numbers must be reported.
+Two changes were implemented and then measured against the same frozen corpus, with real inference
+(prompt version `sovra-prompts-4`, 41 calls, 0 failed, 158.3 s, 37,550 tokens):
 
-A deterministic short-cut was considered and rejected without measuring it: refusing any conflict whose
-claims lack entity, scope and effective date. `eval-001`, a correct conflict, also has no entity, scope
-or effective date in its claims, so that rule would suppress correct findings as readily as the wrong
-ones. It is not implemented.
+1. **Comparison context.** A comparison now receives the other extracted statements of each claim's
+   own document, so an exception written beside the term it modifies is in front of the model. The
+   plumbing is covered by tests that read the prompt that was actually sent.
+2. **Extraction coverage.** The claim prompt now asks for every distinct statement in a passage rather
+   than the first, and says that a stated exception, delegation or superseding date is itself a claim.
+
+**Neither change moved the headline number: accuracy is still 9 of 25.** No case changed side. The
+reason is in the evidence above: for the three exception cases the model already had the exception
+text and judged against it, and the 11 never-compared cases are held back by the candidate filter and
+by extraction, not by the prompt wording. This is reported as a measured negative result rather than
+as an improvement, and the two changes are kept because they are right on their own terms — a model
+should see the document it is judging, and a rule-based filter should not be the only thing deciding
+what reaches it — not because they helped.
+
+How the counting was changed, and what it is worth:
+
+3. **Every compared pair is now counted by the relation it was given**, and the API and the interface
+   state that outcome: how many pairs were compared, what each was judged, and — when no
+   inconsistency was reported — that this means nothing was reported, not that nothing was checked.
+   `RESULTS.json` now carries `accuracy_on_compared_cases`, the negative-case clean rate and a
+   `diagnostics` block naming the case ids behind each bucket, so any of these figures can be checked
+   case by case. `accuracy` itself is **not** redefined: counting the 8 silent negatives as correct
+   would give 0.68, and that is stated as what it is — a definitional alternative, not a measurement.
+
+A deterministic short-cut was considered and rejected without shipping it: refusing any conflict whose
+claims lack entity, scope and effective date. `eval-001`, a correct conflict, also carries no entity,
+scope or effective date, so that rule would suppress correct findings as readily as the wrong ones.
+The two `missing_context` false alarms need a different fix: a stated rule that an assertion of
+incompatibility requires the *values* to be attached to a stated subject or scope in the claim itself,
+not merely absent meta-data.
 
 ## Honest limitations of this evaluation
 
@@ -142,8 +172,11 @@ ones. It is not implemented.
   real procurement documents, and no such claim is made.
 - **One corpus, one model.** Measured with `swiss-ai/Apertus-v1.5-70B` only. The optional 8B model was
   not benchmarked, so no comparison between them is reported.
-- **Single run.** No repeated sampling, so no confidence interval and no variance estimate. A
-  temperature of 0 was used, which reduces but does not remove run-to-run variation.
+- **Single run per prompt version.** No repeated sampling, so no confidence interval and no
+  variance estimate. A temperature of 0 was used, which reduces but does not remove run-to-run
+  variation. The corpus has now been run twice, on prompt version `sovra-prompts-3` and again on
+  `sovra-prompts-4`, and every case landed on the same side both times. That is weak evidence of
+  stability, not a measurement of it.
 - **Not measured:** dollar cost (no verified price list), human review time, reviewer agreement, or
   false-positive rate on real documents.
 - **The demo corpus and the evaluation corpus differ.** The four-document demo run in the README is a

@@ -122,7 +122,7 @@ carrying injection payloads are treated as data under test.
 Method, corpus, raw observations, the provider ledger and the limitations are in
 `docs/EVALUATION.md` and `track_2b/data/evaluation/RESULTS.json`. The corpus is 25 hand-labelled
 synthetic pairs across seven categories, frozen before prompt tuning. Inference was real
-(`swiss-ai/Apertus-v1.5-70B` on CSCS); 39 provider calls, 0 failed.
+(`swiss-ai/Apertus-v1.5-70B` on CSCS); 41 provider calls, 0 failed.
 
 | Class | Support | Precision | Recall | F1 |
 |---|---|---|---|---|
@@ -132,26 +132,38 @@ synthetic pairs across seven categories, frozen before prompt tuning. Inference 
 | unrelated | 3 | 0.000 | 0.000 | 0.000 |
 
 **Accuracy 0.36** (9 of 25). **Abstention rate 0.44** (11 of 25). **Failed requests 0.00**, counted
-separately from abstentions. **Resolved citation rate on conflicts 100 %** (11 of 11 reported
-conflicts carried at least one validated span). Latency per case: mean 5,077 ms, median 5,392 ms.
-Tokens per case: mean 1,260.
+separately from abstentions. **Resolved citation rate on conflicts 100 %** (12 of 12 reported
+conflicts carried at least one validated span). Latency per case: mean 5,542 ms, median 5,581 ms.
+Tokens per case: mean 1,502.
+
+The single figure hides two different failures, so the evaluation now reports them separately: **14
+of the 25 cases ever reached the model**, and on that subset accuracy was **0.6429** (9 of 14). Of the
+10 cases whose expected relation is a negative (`unrelated` or `insufficient_evidence`), 8 produced no
+inconsistency — the absence of a false alarm, not evidence of correctness.
 
 Two things are worth stating plainly.
 
-**Abstention, not error, dominates.** Eleven cases were never compared, because the candidate filter
-did not consider the pair alignable. The model was rarely the thing that failed; the pairing step
-was. Abstaining is safe — no unsupported claim reaches a reviewer — but it is not useful, and it is
-the largest single component of the error.
+**Abstention, not error, dominates the count.** Eleven cases were never compared, because the candidate
+filter did not consider the pair alignable, and four of those produced only one claim. Abstaining is
+safe — no unsupported claim reaches a reviewer — but it is not useful, and it is the largest single
+component of the error.
 
 **The citation guarantee held.** Every conflict the system reported carried a resolved span, and the
 separate end-to-end demo run over four documents produced 25 claims, 10 compared pairs and
 **zero** citations that did not equal an exact slice of their own document's canonical text.
 
-False positives cluster in two categories with identifiable causes. For `valid_exception` cases the
-clause that states the exception usually lives in the same document as the term it modifies, and
-same-document claims are never paired, so the comparison cannot see the carve-out it is asked to
-respect. For `date_change` cases that do reach comparison, the values were judged when the effective
-dates were not recovered as differing known dates.
+The five false positives are all the model's own judgement, and this was established by experiment
+rather than assumed. An earlier revision of this report attributed the `valid_exception` errors to the
+exception clause being dropped before the comparison. That was wrong. The comparison prompt carries
+both claim passages in full, and the model cited the exception sentence as its own evidence before
+judging against it: for `eval-018` the span it quoted reads "as an exception to Policy 4.1", and its
+reasoning still called the values incompatible. A revision of the prompts that additionally placed the
+surrounding statements of each claim's own document in front of the model, alongside an instruction to
+extract every distinct statement including stated exceptions, was then measured against the same
+frozen corpus: 41 calls, 0 failed, and **every case landed on the same side as before**. The changes
+are kept because a model should see the document it is judging, not because they raised the score.
+The `date_change` and `missing_context` errors share the shape the prompt already forbids: a conflict
+asserted from fragments whose subject, scope or effective date is absent.
 
 This evaluation is small, synthetic and single-run. It does not establish real-world performance, and
 no such claim is made.
@@ -227,8 +239,9 @@ conclusions, automated policy changes, dollar cost, customer adoption, or accura
 6. `docs/DEPLOYMENT.md` — deployment modes, credential injection, cost and security notes.
 7. `track_2b/backend/sovra/citations.py`, `normalize.py`, `compare.py`, `pipeline.py` — the evidence
    model, pairing rules and failure handling as implemented.
-8. `track_2b/tests/` — 234 unit, integration and end-to-end tests, including the cross-document
-   citation assertion and tests that prove both credential audits detect a planted canary.
+8. `track_2b/tests/` — 247 unit, integration and end-to-end tests, including the cross-document
+   citation assertion, tests that prove both credential audits detect a planted canary, and tests that
+   read the comparison prompt that was actually sent to check the document context reaches the model.
 9. CSCS LLM Inference API service documentation,
    `https://docs.cscs.ch/services/inference/api/#llm-inference-api-service`, consulted 2026-10-12;
    cross-checked against the live calls in reference 1.

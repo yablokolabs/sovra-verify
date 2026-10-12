@@ -19,11 +19,21 @@ Measured output, written to ``track_2b/data/evaluation/RESULTS.json``:
   * abstention rate and, separately, provider failure rate
   * resolved-citation rate
   * end-to-end latency per case and tokens per case
+  * a decomposition of the accuracy figure: how many cases ever reached the model at
+    all, the model's own accuracy over the subset it was asked about, and the cases
+    whose expected relation is a negative (``unrelated`` / ``insufficient_evidence``),
+    whose wanted output is the absence of a finding
+  * a top-level ``diagnostics`` block naming the case ids behind each bucket
+    (``never_compared``, ``false_alarm``, ``missed_inconsistency``, ``silent_negative``),
+    so a reader can open the case and disagree with the label
 
 Honesty rules enforced by this script:
 
   * failed provider requests are counted separately from correct abstentions;
   * the denominator is every case in the corpus, never only the successes;
+  * ``accuracy`` is never redefined to flatter the system: the secondary figures are
+    reported beside it, and the negative-case clean rate is labelled as the absence of
+    a false alarm rather than as evidence of correctness;
   * a partial run still writes whatever was measured and is labelled ``partial``;
   * raw model output is stored, not a summary that could hide a bad answer.
 
@@ -58,6 +68,8 @@ DEFAULT_OUT = REPO_ROOT / "track_2b" / "data" / "evaluation" / "RESULTS.json"
 
 RELATIONS = ("consistent", "potential_conflict", "insufficient_evidence", "unrelated")
 NO_PREDICTION = ("abstained", "failed")
+#: Expected relations for which producing no finding is the wanted behaviour.
+NEGATIVE_EXPECTED = ("unrelated", "insufficient_evidence")
 
 
 def now() -> str:
@@ -244,6 +256,23 @@ def compute_metrics(rows: list[dict]) -> dict[str, Any]:
 
     abstained = sum(1 for r in rows if r["observed_relation"] == "abstained")
     failed = sum(1 for r in rows if r["observed_relation"] == "failed")
+
+    # -- the decomposition ---------------------------------------------------
+    # ``accuracy`` above keeps its original definition: correct over every case in
+    # the corpus. The keys below split that figure into the subset the model was
+    # actually asked about and the cases whose expected relation is a negative. They
+    # are reported next to it, never instead of it.
+    compared_rows = [r for r in rows if (r.get("candidate_pairs") or 0) >= 1]
+    correct_on_compared = sum(1 for r in compared_rows if r["correct"])
+    negative_rows = [r for r in rows if r["expected_relation"] in NEGATIVE_EXPECTED]
+    negative_without_inconsistency = [
+        r for r in negative_rows if r["observed_relation"] != "potential_conflict"
+    ]
+    false_alarm_rows = [r for r in negative_rows if r["observed_relation"] == "potential_conflict"]
+    missed_rows = [
+        r for r in rows
+        if r["expected_relation"] == "potential_conflict" and r["observed_relation"] in NO_PREDICTION
+    ]
     cited = sum(r["conflicts_with_citation"] for r in rows)
     conflicts = sum(r["conflict_findings"] for r in rows)
     spans = sum(r["evidence_spans"] for r in rows)
@@ -256,6 +285,21 @@ def compute_metrics(rows: list[dict]) -> dict[str, Any]:
         "cases": total,
         "correct": sum(1 for r in rows if r["correct"]),
         "accuracy": round(sum(1 for r in rows if r["correct"]) / total, 4) if total else 0.0,
+        # The model's own result, over the cases it was actually asked about.
+        "compared_cases": len(compared_rows),
+        "correct_on_compared_cases": correct_on_compared,
+        "accuracy_on_compared_cases": (
+            round(correct_on_compared / len(compared_rows), 4) if compared_rows else 0.0
+        ),
+        # Cases where the desired output is the absence of a finding.
+        "negative_cases": len(negative_rows),
+        "negative_cases_without_inconsistency": len(negative_without_inconsistency),
+        "negative_case_clean_rate": (
+            round(len(negative_without_inconsistency) / len(negative_rows), 4)
+            if negative_rows else 0.0
+        ),
+        "false_alarm_cases": len(false_alarm_rows),
+        "missed_inconsistency_cases": len(missed_rows),
         "confusion_matrix": confusion,
         "per_class": per_class,
         "abstained_cases": abstained,
@@ -291,10 +335,55 @@ def compute_metrics(rows: list[dict]) -> dict[str, Any]:
     }
 
 
+def compute_diagnostics(rows: list[dict]) -> dict[str, list[str]]:
+    """Case ids behind each bucket of the decomposition, so a reader can check them.
+
+    Counts alone invite trust; the ids let anyone open the case, read the raw model
+    output and disagree with the label.
+    """
+    return {
+        "never_compared": [
+            r["id"] for r in rows if (r.get("candidate_pairs") or 0) < 1
+        ],
+        "false_alarm": [
+            r["id"] for r in rows
+            if r["expected_relation"] in NEGATIVE_EXPECTED
+            and r["observed_relation"] == "potential_conflict"
+        ],
+        "missed_inconsistency": [
+            r["id"] for r in rows
+            if r["expected_relation"] == "potential_conflict"
+            and r["observed_relation"] in NO_PREDICTION
+        ],
+        "silent_negative": [
+            r["id"] for r in rows
+            if r["expected_relation"] in NEGATIVE_EXPECTED
+            and r["observed_relation"] in NO_PREDICTION
+        ],
+    }
+
+
 def print_summary(metrics: dict[str, Any], rows: list[dict[str, Any]]) -> None:
     print("")
     print("== measured results ==")
     print(f"cases: {metrics['cases']}   correct: {metrics['correct']}   accuracy: {metrics['accuracy']}")
+    print("")
+    print("the accuracy figure, decomposed (accuracy itself is unchanged above)")
+    print(f"  compared cases:            {metrics['compared_cases']} of {metrics['cases']} cases ever "
+          "reached the model")
+    print(f"  accuracy on compared cases: {metrics['accuracy_on_compared_cases']:.4f} "
+          f"({metrics['correct_on_compared_cases']} of {metrics['compared_cases']}) "
+          "<- the model's own result on the subset it was asked about")
+    print(f"  negative cases:            {metrics['negative_cases']} cases where producing no finding "
+          "is the wanted behaviour")
+    print(f"  negative case clean rate:  {metrics['negative_case_clean_rate']:.4f} "
+          f"({metrics['negative_cases_without_inconsistency']} of {metrics['negative_cases']}) "
+          "<- absence of a false alarm, NOT evidence of correctness: a case that was never "
+          "compared could still hide a missed inconsistency")
+    print(f"  false alarm cases:         {metrics['false_alarm_cases']} "
+          "(expected a negative, reported a conflict)")
+    print(f"  missed inconsistency cases: {metrics['missed_inconsistency_cases']} "
+          "(expected a conflict, reported nothing)")
     print("")
     print("confusion matrix (rows = expected, columns = observed)")
     header = ["expected \\ observed"] + list(RELATIONS) + list(NO_PREDICTION)
@@ -410,6 +499,7 @@ def main() -> int:
         shutil.rmtree(tmp_root, ignore_errors=True)
 
     metrics = compute_metrics(rows)
+    diagnostics = compute_diagnostics(rows)
     print_summary(metrics, rows)
 
     failures = [r for r in rows if r["observed_relation"] == "failed"]
@@ -438,6 +528,7 @@ def main() -> int:
             "prompt_version": "see sovra.prompts.PROMPT_VERSION",
         },
         "metrics": metrics,
+        "diagnostics": diagnostics,
         "cases": [
             {k: v for k, v in row.items() if k != "provider_runs"}
             for row in rows

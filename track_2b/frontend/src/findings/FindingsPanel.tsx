@@ -36,6 +36,18 @@ interface FindingsPanelProps {
   onStep: (delta: number) => void
 }
 
+// Sentence-form relation names for the coverage summary, so the counts read as prose.
+const RELATION_SENTENCE: Record<string, string> = {
+  potential_conflict: 'potential conflict',
+  consistent: 'consistent',
+  unrelated: 'unrelated',
+  insufficient_evidence: 'insufficient evidence',
+}
+
+function relationSentence(key: string): string {
+  return RELATION_SENTENCE[key] ?? key.replace(/_/g, ' ')
+}
+
 function formatCoverage(view: AnalysisView): string[] {
   const coverage = view.analysis.candidate_coverage ?? {}
   const lines: string[] = []
@@ -44,6 +56,31 @@ function formatCoverage(view: AnalysisView): string[] {
     lines.push(`${coverage.pairs_considered} candidate pairs passed the scoping filter`)
   }
   if (coverage.pairs_compared !== undefined) lines.push(`${coverage.pairs_compared} pairs sent to Apertus`)
+
+  // A compared pair that is not a conflict produced no finding, so the judged outcome is
+  // stated here instead of leaving an empty finding list to be read either way.
+  const outcomes = coverage.outcomes ?? {}
+  const judged = Object.entries(outcomes)
+    .filter(([, count]) => count > 0)
+    .sort(([, left], [, right]) => right - left)
+  if (judged.length > 0) {
+    const total = judged.reduce((sum, [, count]) => sum + count, 0)
+    const described = judged
+      .map(([relation, count]) => `${count} ${relationSentence(relation)}`)
+      .join(', ')
+    lines.push(`${total} compared pair(s) were judged: ${described}`)
+  }
+  const reported = coverage.inconsistencies_reported ?? outcomes.potential_conflict ?? 0
+  if ((coverage.pairs_compared ?? 0) > 0 && reported === 0) {
+    lines.push(
+      'No compared pair was reported as a potential inconsistency: this corpus was checked and nothing was flagged for review.',
+    )
+  }
+  if (coverage.comparisons_without_finding) {
+    lines.push(
+      `${coverage.comparisons_without_finding} comparison(s) produced no usable judgement (unparseable or truncated model output) and count as neither a finding nor a clear result`,
+    )
+  }
   if (coverage.pairs_dropped_by_cap) {
     lines.push(`${coverage.pairs_dropped_by_cap} candidate pairs were not compared because of the cap`)
   }
@@ -190,10 +227,19 @@ export function FindingsPanel({
       </p>
 
       {analysis.findings.length === 0 ? (
-        <p className="muted">
-          No findings were recorded for this run. Check the status above: a failed or extract-only
-          run produces an empty list without evaluating the corpus.
-        </p>
+        status === 'complete' && !analysis.extract_only ? (
+          <p className="muted">
+            No potential inconsistency was reported for this run. The corpus was considered: the
+            candidate coverage above states how many pairs were compared and the relation each one
+            was given. This is a reported result, not an unchecked corpus — and it is not a
+            statement that the documents are consistent.
+          </p>
+        ) : (
+          <p className="muted">
+            No findings were recorded for this run. Check the status above: a failed or extract-only
+            run produces an empty list without evaluating the corpus.
+          </p>
+        )
       ) : findings.length === 0 ? (
         <p className="muted">No findings match the current filters.</p>
       ) : (

@@ -104,6 +104,15 @@ export interface CandidateCoverage {
   skipped_reasons_other_count?: number
   distinct_skip_reasons?: number
   unknown_scope_candidates_kept?: number
+  // How many compared pairs were judged each relation, keyed by Relation. A compared
+  // pair that ends up consistent, unrelated or insufficient evidence produced no
+  // finding, and that outcome is counted and shown rather than left implicit.
+  outcomes?: Record<string, number>
+  // Comparisons that produced no usable judgement at all (unparseable or truncated
+  // model output). This is not an abstention.
+  comparisons_without_finding?: number
+  // How many potential_conflict findings survived into the report.
+  inconsistencies_reported?: number
   [key: string]: unknown
 }
 

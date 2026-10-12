@@ -6,6 +6,8 @@ Hugging Face.
 
 from __future__ import annotations
 
+import json
+
 import httpx
 import pytest
 
@@ -260,3 +262,47 @@ def test_an_empty_corpus_fails_with_an_explicit_reason(
     analysis = service.analyse(document_ids=[])
     assert analysis.status is AnalysisStatus.FAILED
     assert any("no documents" in failure.lower() for failure in analysis.failures)
+
+
+# -- a run that reports nothing says what it compared ----------------------
+def _only_consistent_handler(canned_handler):
+    """Reuse the canned handler, then rewrite compare answers to "consistent".
+
+    Wrapping the shared handler keeps one implementation of the claim-request
+    parsing in the suite instead of a second copy that could drift from it.
+    """
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        response = canned_handler(request)
+        if request.method == "GET" or not request.content:
+            return response
+        system = json.loads(request.content.decode("utf-8"))["messages"][0]["content"]
+        if "procurement-document analyst" in system:
+            return response
+        payload = response.json()
+        content = json.loads(payload["choices"][0]["message"]["content"])
+        content["relation"] = "consistent"
+        payload["choices"][0]["message"]["content"] = json.dumps(content)
+        return httpx.Response(response.status_code, json=payload)
+
+    return handler
+
+
+def test_every_compared_pair_is_counted_and_an_empty_report_says_so(
+    service_factory, corpus, canned_handler_fn
+):
+    service, _ = service_factory(_only_consistent_handler(canned_handler_fn))
+    analysis = service.analyse(document_ids=corpus)
+
+    assert analysis.status is AnalysisStatus.COMPLETE, analysis.failures
+    assert analysis.findings, "the canned claims should still produce compared pairs"
+    assert all(finding.relation is Relation.CONSISTENT for finding in analysis.findings)
+
+    coverage = analysis.candidate_coverage
+    assert coverage["outcomes"] == {"consistent": len(analysis.findings)}
+    assert coverage["inconsistencies_reported"] == 0
+    assert coverage["comparisons_without_finding"] == 0
+    assert any(
+        "nothing was reported, not that nothing was checked" in limitation
+        for limitation in analysis.limitations
+    ), analysis.limitations

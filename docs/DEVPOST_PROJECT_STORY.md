@@ -46,13 +46,13 @@ And we measured the result honestly: 0.36 accuracy on a 25-case frozen corpus, w
 
 ## What we learned
 
-**Retrieval, not reasoning, was the bottleneck.** Abstention, not a wrong answer, dominated the evaluation result: 11 of 25 cases were never compared because the candidate filter did not consider the pair alignable. Only 14 cases ever reached the model, and it was right on 9 of those. The model was rarely the thing that failed; the pairing step was, together with exception context we never showed it.
+**We were wrong about why it failed, and the second measurement said so.** The first evaluation run showed 11 of 25 cases never compared, so we concluded the pairing filter was the bottleneck, not the model. We then made the comparison carry the surrounding statements of each claim's own document, so an exception written beside a term would be in front of the model, and re-ran the same frozen corpus. Nothing moved: the same 9 of 25. The model had not been missing context at all — in one case it cited the sentence "as an exception to Policy 4.1" as its own evidence and still called it a conflict. Half the misses are the filter and extraction; the other half are the model's judgement on text it had already read. We only know that because we measured the second time instead of shipping the story that flattered us.
 
 **A test found the most serious bug.** The cross-document citation defect would have produced quotes from the wrong document that still looked plausible in the interface. It was caught by an assertion, not by reading the code, and it is the reason the citation check is now a required test rather than a manual inspection.
 
 **Constraints made the design better.** Not being allowed to silently downgrade from 70B, and not being allowed to let the model author a quote, forced the evidence model to be explicit — and made "the call failed" a first-class outcome instead of something papered over by a fallback.
 
-**Honest scoring is uncomfortable and worth it.** Writing 0.36 next to a project we spent the day on is less pleasant than writing the demo-run numbers only. It is also the only version of the result that tells a reader whether to trust the tool.
+**Honest scoring is uncomfortable and worth it.** Writing 0.36 next to a project we spent the day on is less pleasant than writing the demo-run numbers only. It is also the only version of the result that tells a reader whether to trust the tool — and a measured negative result about our own fix is worth more than an unmeasured claim that it worked.
 
 ## What's next for Sovra Verify - Don't Just Answer. Prove It.
 

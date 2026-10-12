@@ -23,6 +23,7 @@ from .models import (
     Claim,
     Document,
     Finding,
+    Passage,
     Relation,
     ProviderRun,
     utcnow,
@@ -186,6 +187,24 @@ class SovraService:
         analysis.pair_count = len(candidates)
 
         passages_by_id = {p.id: p for p in usable_passages}
+
+        # Context for every comparison: the other extracted statements of each claim's
+        # own document. An exception, carve-out or superseding date is normally written
+        # beside the term it modifies, and two claims from the same document are never
+        # paired, so without this the model judges a difference without ever having seen
+        # the sentence that explains it. Bounded by MAX_CONTEXT_PASSAGES_PER_SIDE.
+        context_by_document: dict[str, list[Passage]] = {}
+        seen_context: dict[str, set[str]] = {}
+        for claim in resolved_claims:
+            passage = passages_by_id.get(claim.source_passage_id)
+            if passage is None:
+                continue
+            ids = seen_context.setdefault(passage.document_id, set())
+            if passage.id in ids:
+                continue
+            ids.add(passage.id)
+            context_by_document.setdefault(passage.document_id, []).append(passage)
+
         comparer = Comparer(self.router, self.settings, extractor)
         outcome = comparer.compare(
             analysis_id=analysis.id,
@@ -193,6 +212,7 @@ class SovraService:
             passages_by_id=passages_by_id,
             canonical_by_document=canonical_by_document,
             document_names=document_names,
+            context_by_document=context_by_document,
         )
 
         kept: list[Finding] = []
@@ -202,6 +222,24 @@ class SovraService:
                 rejected += 1
                 continue
             kept.append(finding)
+
+        # Every judged pair is counted by the relation it was given, so a run that
+        # reports no inconsistency states what it actually considered and what it
+        # concluded, instead of leaving an empty finding list to be read either way.
+        judged: dict[str, int] = {}
+        for finding in kept:
+            judged[finding.relation.value] = judged.get(finding.relation.value, 0) + 1
+        coverage["outcomes"] = dict(sorted(judged.items()))
+        coverage["comparisons_without_finding"] = outcome.without_finding + rejected
+        coverage["inconsistencies_reported"] = judged.get(Relation.POTENTIAL_CONFLICT.value, 0)
+        analysis.candidate_coverage = coverage
+
+        if candidates and not judged.get(Relation.POTENTIAL_CONFLICT.value, 0):
+            analysis.limitations.append(
+                f"{len(candidates)} candidate pair(s) were compared and none was judged a potential "
+                "inconsistency. The coverage block lists the relation given to every compared pair, "
+                "so this result means nothing was reported, not that nothing was checked."
+            )
         if rejected:
             analysis.limitations.append(
                 f"{rejected} potential conflicts were discarded because their citations did not "
