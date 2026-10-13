@@ -1,0 +1,28 @@
+/* Brand fonts — Editorial Mono
+ *
+ * The three families named in tokens.css, served out of the project's own
+ * dependency tree. Nothing used to load them: every scene fell back to
+ * Times/Helvetica at wider metrics, which is why the taller scenes overflowed
+ * the frame and why the type did not look like the style the demo claims.
+ *
+ * Everything is local. No font is fetched from a network, so a render on an
+ * offline machine produces the same pixels as one with a connection, and no
+ * font has to be installed on the host.
+ *
+ * Instrument Serif is static (400, roman and italic — the italic is the accent
+ * the scenes set their key phrases in). Geist and JetBrains Mono are shipped as
+ * variable faces, so every weight the scenes ask for (400, 500, 600) comes from
+ * one file each, declared under the family names `Geist Variable` and
+ * `JetBrains Mono Variable`. tokens.css lists those names ahead of the static
+ * names, so a machine that does have the plain families installed still gets a
+ * known face.
+ *
+ * Licences: all three families are SIL OFL 1.1. The licence text ships with
+ * each package under node_modules/@fontsource* — see the LICENSE file in each
+ * package — and is neither modified nor removed here.
+ */
+
+@import '@fontsource/instrument-serif/latin-400.css';
+@import '@fontsource/instrument-serif/latin-400-italic.css';
+@import '@fontsource-variable/geist/wght.css';
+@import '@fontsource-variable/jetbrains-mono/wght.css';

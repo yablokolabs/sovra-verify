@@ -29,9 +29,9 @@ function figure(item: (typeof FIGURES)[number]): string {
  */
 export default defineSegment({
 	id: 'sovra-results',
-	advances: [6.0, 14.0],
+	advances: [6.0, 14.0, 20.0],
 	voiceover:
-		'On four documents: 25 claims, 10 pairs compared, 13 calls, zero failures, and every displayed citation resolved to an exact slice of canonical text. CSCS hosted inference is external network inference, so a local app calling CSCS is not air gapped.',
+		'On four documents, every displayed citation resolved to an exact slice of canonical text. CSCS hosted inference is external network inference. A local application calling CSCS is not air gapped, and Swiss inference residency does not establish residency of the whole application. These figures are one run over four synthetic documents, not a general accuracy claim.',
 	notes: 'Final scene. Ends on substantive limitation content: no closing card, no sign-off, no branding strip.',
 
 	mount(el) {
@@ -43,15 +43,15 @@ export default defineSegment({
           What was measured, and <span style="font-style:italic;">what it is not</span>.
         </div>
 
-        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:40px 56px; margin-top:72px;">
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:40px 56px; margin-top:64px;">
           ${FIGURES.map(figure).join('')}
         </div>
 
         <div data-ref="limit" style="
-          margin-top:80px;
+          margin-top:64px;
           border:var(--rule-weight) solid var(--color-border);
           background:var(--color-surface);
-          padding:44px 48px;
+          padding:36px 44px;
           opacity:0;
         ">
           <div style="font-family:var(--font-mono); font-size:16px; letter-spacing:0.14em; text-transform:uppercase; color:var(--color-muted);">Deployment reality</div>
@@ -76,11 +76,14 @@ export default defineSegment({
 
 		figures.forEach((item, index) => settle(item, index * 90));
 
-		await ctx.hold(2000);
+		// The limitation owns a beat of its own: it is the last thing the film
+		// says, and before this it appeared two seconds in — while the narration
+		// was still reading out the figures and had not yet named CSCS at all.
+		await ctx.waitForNext();
 
 		settle(limit, 0);
 
-		await ctx.hold(6000);
+		await ctx.hold(7000);
 	},
 
 	unmount() {

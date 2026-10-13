@@ -11,7 +11,7 @@ export default defineSegment({
 	id: 'sovra-review-export',
 	advances: [6.0, 14.0],
 	voiceover:
-		'A reviewer confirms or dismisses each finding, and the decision is recorded with a note. Export carries the source hash, the page, the character offsets, and the model that produced the run.',
+		'A reviewer confirms or dismisses each finding, and the decision is recorded. Export carries the source hash, the page, the offsets, and the model.',
 	notes: 'Review states and the export bundle. No legal resolution wording.',
 
 	mount(el) {

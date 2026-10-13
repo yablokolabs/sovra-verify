@@ -5,9 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "npx videowright dev",
-    "render": "npx videowright render"
+    "render": "npx videowright render",
+    "postinstall": "bash scripts/patch-videowright.sh",
+    "derive": "node scripts/derive-advances.mjs --write",
+    "check": "npm run check:timing && npm run check:audio && npm run check:frames",
+    "check:timing": "node scripts/derive-advances.mjs --check",
+    "check:audio": "node scripts/check-audio.mjs",
+    "check:frames": "node scripts/check-frames.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource/instrument-serif": "^5.3.0",
     "videowright": "^0.1.1"
   },
   "devDependencies": {

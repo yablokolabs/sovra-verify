@@ -79,7 +79,7 @@ export default defineSegment({
 	id: 'sovra-finding',
 	advances: [5.0, 10.0, 15.0, 20.0],
 	voiceover:
-		'The master supply agreement says payment is due within 30 days of the invoice date. The accounts payable policy says invoices are settled within 60 days, under the same effective date. Both quotes are sliced from canonical text at the recorded offsets. The model never writes the quote.',
+		'The agreement says payment is due within 30 days of the invoice date. The policy says invoices are settled within 60 days, under the same effective date. Both quotes are sliced from canonical text at the recorded offsets.',
 	notes: 'The genuine conflict. Offsets and quotes are from the recorded run.',
 
 	mount(el) {

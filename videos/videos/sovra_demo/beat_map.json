@@ -1,0 +1,18 @@
+{
+  "note": [
+    "Which narrated sentence opens each reveal, as a 0-based sentence index into",
+    "that segment's recorded paragraph. One entry per `await ctx.waitForNext()`,",
+    "in order. scripts/derive-advances.mjs turns these into the advance times in",
+    "audio/tracks/v1/track.ts and the voiceover module, so the picture changes on",
+    "the sentence that explains it and a re-record re-times the whole film in one",
+    "command. Two reveals may cite one sentence: the sentence's speaking time is",
+    "then divided evenly between them."
+  ],
+  "sovra-problem": [1],
+  "sovra-corpus": [0, 0, 1],
+  "sovra-run": [0, 0],
+  "sovra-finding": [0, 1, 2],
+  "sovra-negative": [1, 2],
+  "sovra-review-export": [1],
+  "sovra-results": [0, 1]
+}

@@ -160,7 +160,7 @@ British young female voices in the account are library voices that the free tier
 API (HTTP 402 `paid_plan_required`), and voice design is paid-plan only (HTTP 403
 `feature_not_available`). No additional spend was authorised, so the closest usable premade voice
 was used instead — Alice, British and female — and the deviation is recorded in
-`videos/videos/sovra_demo/audio/originals/voiceovers/alice-uk-v1/audio_meta.json`.
+`videos/videos/sovra_demo/audio/originals/voiceovers/alice-uk-v2/audio_meta.json`.
 
 ## Provider verification
 

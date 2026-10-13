@@ -16,7 +16,7 @@ export default defineSegment({
 	id: 'sovra-problem',
 	advances: [7.5, 15.0],
 	voiceover:
-		'Procurement teams compare a supplier agreement, a payment policy and an invoice by hand. A language model answer that cannot show where it came from is not usable evidence. Sovra Verify audits the corpus and returns the exact passages.',
+		'Procurement teams compare a supplier agreement, a payment policy and an invoice by hand. A model answer that cannot show its source is not evidence. Sovra Verify returns the exact passages.',
 	notes: 'Title card plus problem statement. Logo mark appears once, at the start.',
 
 	mount(el) {

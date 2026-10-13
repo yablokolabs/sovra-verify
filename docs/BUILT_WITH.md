@@ -78,7 +78,7 @@ of this size, so no vector database was adopted.
 - Python dependencies: `track_2b/backend/requirements.txt`
 - Frontend dependencies: `track_2b/frontend/package.json`
 - Video toolchain: `videos/package.json`, `videos/videos/sovra_demo/`
-- Narration record: `videos/videos/sovra_demo/audio/originals/voiceovers/alice-uk-v1/audio_meta.json`
+- Narration record: `videos/videos/sovra_demo/audio/originals/voiceovers/alice-uk-v2/audio_meta.json`
 - Report deck: `track_2b/technical_report_deck.html` with `scripts/build_report_deck.py`, and the typeface
   licences in `track_2b/REPORT_FONTS_NOTICE.md`
 - Diagram source: `docs/diagrams/architecture.html`

@@ -71,34 +71,49 @@ are the schedule the scenes were authored against, before a voice existed:
 | sovra-finding | [5.0, 10.0, 15.0, 20.0] | 20 s |
 | sovra-negative | [5.0, 11.0, 20.0] | 20 s |
 | sovra-review-export | [6.0, 14.0] | 14 s |
-| sovra-results | [6.0, 14.0] | 14 s |
-| **Total** | | **122 s** |
+| sovra-results | [6.0, 14.0, 20.0] | 20 s |
+| **Total** | | **128 s** |
 
-Script word count 304. At the reference pace of 150 words per minute
-(2.5 words per second) that is 121.6 seconds of narration, which matches the
-122 second scene schedule to within half a second. See
+The declared schedule was sized from a 304-word draft at the reference pace of
+150 words per minute (2.5 words per second), which is where its 122 s total came
+from; the extra beat in `sovra-results` brings it to 128 s. The delivered take
+is take `alice-uk-v2`: 247 words over 114.4 s, 2.16 words per second. See
 `voiceover_script/script.md` for the per-segment count.
 
-That 122 s schedule is a plan, not the delivered timing. The recorded
-narration came in at 117.432 s, so `audio/tracks/v1/track.ts` overlays the
+That declared schedule is a plan, not the delivered timing. The recorded
+narration came in at 114.4 s and the track adds a 0.8 s silent tail, so `audio/tracks/v1/track.ts` overlays the
 alignment-derived schedule on top of the declared advances, and that is what
 the render uses:
 
 | Segment | Rendered advances | Narration span |
 |---|---|---|
-| sovra-problem | [5.712, 13.56] | 0.0 – 13.56 s |
-| sovra-corpus | [3.816, 8.15, 11.448, 15.464] | 13.56 – 29.024 s |
-| sovra-run | [6.133, 12.266, 18.599] | 29.024 – 47.623 s |
-| sovra-finding | [4.366, 10.508, 15.744] | 47.623 – 63.367 s |
-| sovra-negative | [7.104, 13.804, 21.513] | 63.367 – 84.88 s |
-| sovra-review-export | [5.689, 12.609] | 84.88 – 97.489 s |
-| sovra-results | [11.784, 19.943] | 97.489 – 117.432 s |
-| **Total** | | **117.432 s** |
+| sovra-problem | [6.316, 13.653] | 0.00 – 13.65 s |
+| sovra-corpus | [0.5, 3.889, 8.289, 13.224] | 13.65 – 26.88 s |
+| sovra-run | [1.021, 7.058, 13.537] | 26.88 – 40.41 s |
+| sovra-finding | [0.5, 4.702, 11.018, 15.429] | 40.41 – 55.84 s |
+| sovra-negative | [2.276, 14.153, 21.212] | 55.84 – 77.06 s |
+| sovra-review-export | [5.677, 11.157] | 77.06 – 88.21 s |
+| sovra-results | [0.5, 6.571, 27.012] | 88.21 – 115.22 s |
+| **Total** | | **115.224 s** |
 
 Each span runs to the next section's first word, and the last runs to the end
 of the file, so the seven durations sum to exactly the narration length and no
 spoken word falls past the picture. At 60 fps the per-segment frame rounding
 puts each scene boundary within 30 ms of its section start and none before it.
+
+These numbers are generated, never typed. `node scripts/derive-advances.mjs`
+reads the provider word alignment, the beat map and the segment sources;
+`--write` rewrites this table together with the two timing modules and the two
+script files, and `npm run check` fails when any of them disagrees with the
+recorded take. So a re-recording is one command, not a re-timing session.
+
+A segment needs one advance per `waitForNext()` plus one for its span, and the
+beat map (`beat_map.json`) names, for each reveal, the recorded sentence it
+belongs to. A sentence that two reveals share has its speaking time divided
+between them. Two floors apply: an advance must be positive, because the
+renderer rejects `0`, and a segment's first reveal waits 0.5 s so it never
+fires inside the 400 ms incoming crossfade — a beat that does makes the render
+driver read the outgoing segment as current and abort the whole render.
 
 `waitForNext()` is placed at every point where the narration moves to a new
 subject, so re-recording the voice only changes timing data and never requires
@@ -107,54 +122,58 @@ dwell inside a beat after its last reveal.
 
 ## Script
 
-Full script, with per-segment word counts: `voiceover_script/script.md`.
+The narration as recorded, per segment. `voiceover_script/script.md` is the same
+text with the per-segment word counts and recorded spans; both files are written
+by `node scripts/derive-advances.mjs --write` from the segment `voiceover` fields
+and the recorded take, so neither can describe a script the film does not play.
 
 ### sovra-problem
 
 Procurement teams compare a supplier agreement, a payment policy and an invoice
-by hand. A language model answer that cannot show where it came from is not
-usable evidence. Sovra Verify audits the corpus and returns the exact passages.
+by hand. A model answer that cannot show its source is not evidence. Sovra
+Verify returns the exact passages.
 
 ### sovra-corpus
 
-Sovra Verify starts from a corpus. Four synthetic documents go in: a master
-supply agreement, an accounts payable policy, an invoice, and an amendment.
-Each file is hashed, and its text is extracted into canonical passages with page
-and character offsets. Scanned pages are refused, not guessed at.
+Four synthetic documents go in: a master supply agreement, an accounts payable
+policy, an invoice, and an amendment. Each file is hashed, and its text becomes
+canonical passages.
 
 ### sovra-run
 
-Apertus one point five 70 billion, hosted on CSCS, reads the passages and
-nominates typed claims. It found 25 claims, and Sovra Verify compared 10
-candidate pairs. Thirteen provider calls, none failed, with fifteen thousand six
-hundred and fifty tokens and seventy one seconds of latency.
+Apertus 1.5 70B, hosted on CSCS, reads the passages and nominates typed claims:
+25 claims found, 10 candidate pairs compared, 13 provider calls, none failed.
 
 ### sovra-finding
 
-The master supply agreement says payment is due within 30 days of the invoice
-date. The accounts payable policy says invoices are settled within 60 days,
-under the same effective date. Both quotes are sliced from canonical text at the
-recorded offsets. The model never writes the quote.
+The agreement says payment is due within 30 days of the invoice date. The policy
+says invoices are settled within 60 days, under the same effective date. Both
+quotes are sliced from canonical text at the recorded offsets.
 
 ### sovra-negative
 
-Two of the pairs are not conflicts. The expedited freight clause sets a 10 day
-period as a stated exception, and the amendment changes payment to 45 days,
-effective the first of May 2026. Sovra Verify flags potential inconsistencies
-for a human reviewer. It does not decide which document wins.
+Two pairs are not conflicts. The expedited freight clause sets a 10 day period
+as a stated exception, and the amendment changes payment to 45 days, effective 1
+May 2026. Sovra Verify flags potential inconsistencies for a human. It does not
+decide which document wins.
 
 ### sovra-review-export
 
-A reviewer confirms or dismisses each finding, and the decision is recorded with
-a note. Export carries the source hash, the page, the character offsets, and the
-model that produced the run.
+A reviewer confirms or dismisses each finding, and the decision is recorded.
+Export carries the source hash, the page, the offsets, and the model.
 
 ### sovra-results
 
-On four documents: 25 claims, 10 pairs compared, 13 calls, zero failures, and
-every displayed citation resolved to an exact slice of canonical text. CSCS
-hosted inference is external network inference, so a local app calling CSCS is
-not air gapped.
+On four documents, every displayed citation resolved to an exact slice of
+canonical text. CSCS hosted inference is external network inference. A local
+application calling CSCS is not air gapped, and Swiss inference residency does
+not establish residency of the whole application. These figures are one run over
+four synthetic documents, not a general accuracy claim.
+
+The last scene's closing card is read in full: the take `alice-uk-v2` narrates
+its three sentences, including that Swiss inference residency does not establish
+residency of the whole application and that these figures are one run over four
+synthetic documents rather than a general accuracy claim.
 
 ## Measured facts used on screen
 
@@ -207,3 +226,69 @@ Two defects were visible in the first rendered MP4 and are fixed here.
   which also removes up to 1.2 s of accumulated drift between picture and voice.
   Re-rendered length and the audit of the delivered MP4 are recorded in
   `docs/PROGRESS.md`.
+
+### 2026-10-12 — The verdict card never appeared, the fonts never loaded, three scenes overflowed
+
+Found by holding the finished film against its own artifacts rather than by
+reading the source. All of it is fixed; the checks that now catch it are
+`videos/scripts/derive-advances.mjs --check`, `check-frames.mjs` and
+`check-audio.mjs`, run together by `npm run check` (root target:
+`make video-check`).
+
+- **`sovra-finding`'s verdict panel was authored, positioned and timed to show,
+  and never appeared.** The scene has three `waitForNext()` calls, so its advance
+  array needs four entries: three reveals and the segment's span. It had three,
+  and the renderer takes the last entry as the segment duration, so the third
+  reveal had no moment to fire and the segment ended on the second. The same
+  array is maintained by hand in two files (`audio/tracks/v1/track.ts` and the
+  voiceover module), and a short array fails silently: the render succeeds and
+  the picture simply never changes. The times are now derived from the provider's
+  word alignment by `scripts/derive-advances.mjs`, which counts the reveals in
+  each scene and refuses to write a mismatched array.
+- **The brand fonts were never loaded.** `tokens.css` named Instrument Serif,
+  Geist and JetBrains Mono, and nothing anywhere imported them, so every scene
+  rendered in Times/Helvetica at wider metrics. `styles/editorial-mono/fonts.css`
+  now loads them from `@fontsource` packages in the project's own dependency
+  tree — no network fetch at render time — and the layout was re-measured with
+  them: the corpus scene alone was 47 px taller without them.
+- **Three scenes ran past the bottom rule.** `sovra-corpus` by 42 px,
+  `sovra-negative` by 76 px (fallback metrics; 43 px once the real fonts loaded)
+  and `sovra-results` by 17 px. The content is absolutely positioned, so the
+  excess was simply cut off. Gaps were tightened — no copy was cut — and every
+  scene now clears the rule, verified on the export frame by frame.
+- **`sovra-results` showed its figures eleven seconds late.** Its single beat was
+  placed by an even-share heuristic rather than against the narration, so the
+  figures appeared after the voice had moved on to the limitation. The scene now
+  has a beat of its own for the closing card, which arrives as the narration
+  reaches it. Nothing about that scene's copy changed beyond the gap.
+- **A first beat at 0 s aborted the render.** The renderer rejects a
+  non-positive advance, and a beat firing inside the 400 ms incoming crossfade
+  makes the driver read the outgoing segment as current and abort with
+  "transitioned at advance index 0 but advances array has more entries". Derived
+  beats are now floored at 50 ms, and a segment's first reveal waits 0.5 s.
+- **The declared script described a take the film does not play.** The segment
+  `voiceover` fields, `voiceover_script/script.md` and
+  `audio/originals/voiceovers/alice-uk-v1/provider_script.md` all held the longer
+  138 s draft, not the 117.4 s take that was recorded and rendered. They now
+  carry the recorded text, are written by the derivation script, and
+  `check-audio.mjs` fails when any of them stops matching the alignment.
+
+### 2026-10-13 — The narration reads the closing card in full
+
+The owner approved a second take so that the narrator reads all of the closing
+card. Take `alice-uk-v2` replaces `alice-uk-v1`: same voice and model, 1,536
+characters, 114.4 s.
+
+- **What the take adds.** `sovra-results` now narrates the card's three
+  sentences: external network inference, not air gapped and Swiss residency, and
+  one run over four synthetic documents.
+- **What was cut to stay under two minutes.** Phrases the screen already shows:
+  "with page and character offsets" (`sovra-corpus`), the token and latency
+  figures (`sovra-run`), "with a note" and "that produced the run"
+  (`sovra-review-export`), and the spoken repeat of the four counts in
+  `sovra-results`, which `sovra-run` already says.
+- **The film no longer stops on the last word.** The take ends 0.4 s after the
+  last spoken sound, and a player can drop the end of a file. The mix command now
+  appends 0.8 s of silence, so the track and the film are 115.224 s.
+- **Timing.** All advances were re-derived from the new alignment by
+  `scripts/derive-advances.mjs --write`; the beat map did not change.
