@@ -77,24 +77,24 @@ are the schedule the scenes were authored against, before a voice existed:
 The declared schedule was sized from a 304-word draft at the reference pace of
 150 words per minute (2.5 words per second), which is where its 122 s total came
 from; the extra beat in `sovra-results` brings it to 128 s. The delivered take
-is the trimmed script: 250 words over 117.432 s, 2.13 words per second. See
+is take `alice-uk-v2`: 247 words over 114.4 s, 2.16 words per second. See
 `voiceover_script/script.md` for the per-segment count.
 
 That declared schedule is a plan, not the delivered timing. The recorded
-narration came in at 117.432 s, so `audio/tracks/v1/track.ts` overlays the
+narration came in at 114.4 s and the track adds a 0.8 s silent tail, so `audio/tracks/v1/track.ts` overlays the
 alignment-derived schedule on top of the declared advances, and that is what
 the render uses:
 
 | Segment | Rendered advances | Narration span |
 |---|---|---|
-| sovra-problem | [6.223, 13.56] | 0.00 – 13.56 s |
-| sovra-corpus | [0.5, 4.075, 8.661, 15.464] | 13.56 – 29.02 s |
-| sovra-run | [1.185, 9.73, 18.599] | 29.02 – 47.62 s |
-| sovra-finding | [0.5, 4.691, 11.018, 15.744] | 47.62 – 63.37 s |
-| sovra-negative | [2.635, 14.245, 21.513] | 63.37 – 84.88 s |
-| sovra-review-export | [6.073, 12.609] | 84.88 – 97.49 s |
-| sovra-results | [0.5, 12.167, 19.943] | 97.49 – 117.43 s |
-| **Total** | | **117.432 s** |
+| sovra-problem | [6.316, 13.653] | 0.00 – 13.65 s |
+| sovra-corpus | [0.5, 3.889, 8.289, 13.224] | 13.65 – 26.88 s |
+| sovra-run | [1.021, 7.058, 13.537] | 26.88 – 40.41 s |
+| sovra-finding | [0.5, 4.702, 11.018, 15.429] | 40.41 – 55.84 s |
+| sovra-negative | [2.276, 14.153, 21.212] | 55.84 – 77.06 s |
+| sovra-review-export | [5.677, 11.157] | 77.06 – 88.21 s |
+| sovra-results | [0.5, 6.571, 27.012] | 88.21 – 115.22 s |
+| **Total** | | **115.224 s** |
 
 Each span runs to the next section's first word, and the last runs to the end
 of the file, so the seven durations sum to exactly the narration length and no
@@ -130,20 +130,19 @@ and the recorded take, so neither can describe a script the film does not play.
 ### sovra-problem
 
 Procurement teams compare a supplier agreement, a payment policy and an invoice
-by hand. A model answer that cannot show its source is not evidence. Sovra Verify
-returns the exact passages.
+by hand. A model answer that cannot show its source is not evidence. Sovra
+Verify returns the exact passages.
 
 ### sovra-corpus
 
 Four synthetic documents go in: a master supply agreement, an accounts payable
 policy, an invoice, and an amendment. Each file is hashed, and its text becomes
-canonical passages with page and character offsets.
+canonical passages.
 
 ### sovra-run
 
 Apertus 1.5 70B, hosted on CSCS, reads the passages and nominates typed claims:
-25 claims found, 10 candidate pairs compared, 13 provider calls, none failed,
-15,650 tokens, 71 seconds of latency.
+25 claims found, 10 candidate pairs compared, 13 provider calls, none failed.
 
 ### sovra-finding
 
@@ -154,28 +153,27 @@ quotes are sliced from canonical text at the recorded offsets.
 ### sovra-negative
 
 Two pairs are not conflicts. The expedited freight clause sets a 10 day period
-as a stated exception, and the amendment changes payment to 45 days, effective
-1 May 2026. Sovra Verify flags potential inconsistencies for a human. It does
-not decide which document wins.
+as a stated exception, and the amendment changes payment to 45 days, effective 1
+May 2026. Sovra Verify flags potential inconsistencies for a human. It does not
+decide which document wins.
 
 ### sovra-review-export
 
-A reviewer confirms or dismisses each finding, and the decision is recorded with
-a note. Export carries the source hash, the page, the offsets, and the model that
-produced the run.
+A reviewer confirms or dismisses each finding, and the decision is recorded.
+Export carries the source hash, the page, the offsets, and the model.
 
 ### sovra-results
 
-On four documents: 25 claims, 10 pairs compared, 13 calls, zero failures, and
-every displayed citation resolved to an exact slice of canonical text. CSCS
-hosted inference is external network inference, so a local app calling CSCS is
-not air gapped.
+On four documents, every displayed citation resolved to an exact slice of
+canonical text. CSCS hosted inference is external network inference. A local
+application calling CSCS is not air gapped, and Swiss inference residency does
+not establish residency of the whole application. These figures are one run over
+four synthetic documents, not a general accuracy claim.
 
-The last scene's closing card also carries two sentences the narration does not
-read — that Swiss inference residency does not establish residency of the whole
-application, and that these figures are one run over four synthetic documents
-rather than a general accuracy claim. Closing that gap is the one open item on
-this film; see the recording plan in `audio/audio_plan.md`.
+The last scene's closing card is read in full: the take `alice-uk-v2` narrates
+its three sentences, including that Swiss inference residency does not establish
+residency of the whole application and that these figures are one run over four
+synthetic documents rather than a general accuracy claim.
 
 ## Measured facts used on screen
 
@@ -274,3 +272,23 @@ reading the source. All of it is fixed; the checks that now catch it are
   138 s draft, not the 117.4 s take that was recorded and rendered. They now
   carry the recorded text, are written by the derivation script, and
   `check-audio.mjs` fails when any of them stops matching the alignment.
+
+### 2026-10-13 — The narration reads the closing card in full
+
+The owner approved a second take so that the narrator reads all of the closing
+card. Take `alice-uk-v2` replaces `alice-uk-v1`: same voice and model, 1,536
+characters, 114.4 s.
+
+- **What the take adds.** `sovra-results` now narrates the card's three
+  sentences: external network inference, not air gapped and Swiss residency, and
+  one run over four synthetic documents.
+- **What was cut to stay under two minutes.** Phrases the screen already shows:
+  "with page and character offsets" (`sovra-corpus`), the token and latency
+  figures (`sovra-run`), "with a note" and "that produced the run"
+  (`sovra-review-export`), and the spoken repeat of the four counts in
+  `sovra-results`, which `sovra-run` already says.
+- **The film no longer stops on the last word.** The take ends 0.4 s after the
+  last spoken sound, and a player can drop the end of a file. The mix command now
+  appends 0.8 s of silence, so the track and the film are 115.224 s.
+- **Timing.** All advances were re-derived from the new alignment by
+  `scripts/derive-advances.mjs --write`; the beat map did not change.

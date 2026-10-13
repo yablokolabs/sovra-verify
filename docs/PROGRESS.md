@@ -758,6 +758,42 @@ One exact next action: put the proposed take in front of the owner for approval 
   `node scripts/derive-advances.mjs --write` plus `npm run check`, and re-render.
 ```
 
+## Checkpoint M6-6 — the narration reads the closing card in full, and the film no longer stops on the last word
+
+```
+Timestamp / checkpoint ID:   2026-10-13 02:55 UTC / M6-6
+Milestone / branch / commit: M6 / fix-demo-video-clipping / on top of bfaf5cc
+Actual implemented behavior: second narration take (alice-uk-v2) with a script the owner approved; the
+  narrator reads all three sentences of the closing card. Phrases the screen already shows were cut to
+  stay under two minutes. The track has a 0.8 s silent tail. All advances re-derived; film re-rendered.
+Command / exit code / result:
+  ElevenLabs with-timestamps, first request -> HTTP 401 quota_exceeded (96 credits left, 1,536 needed),
+      nothing generated, nothing billed
+  same request with the key the owner supplied -> HTTP 200, 1,536 characters, alignment text identical
+      to the text sent, audio 114.416 s
+  ffmpeg loudnorm=I=-16:TP=-1.5:LRA=11,apad=pad_dur=0.8 -> track.mp3 115.224 s, -16.7 LUFS, peak -1.1 dBFS
+  node scripts/derive-advances.mjs --write  -> 7 segments, 115.224 s of picture                 EXIT 0
+  npx tsc --noEmit (videos)                 -> clean                                            EXIT 0
+  npm run check (videos)                    -> timing PASS, audio PASS, frames PASS             EXIT 0
+  npx videowright render sovra_demo --output ../docs/demo/sovra-verify-demo.mp4 -> 6913 frames  EXIT 0
+  ffprobe docs/demo/sovra-verify-demo.mp4   -> video 115.217 s, audio 115.200 s, 1920x1080 @ 60 fps,
+      7,507,455 bytes
+  delivered audio, 100 ms windows           -> last speech at 114.0 s, then below -69 dB to the end
+  delivered frames, one per scene end       -> verdict panel shown in sovra-finding, no content below the
+      bottom rule, brand fonts in every scene, closing card complete
+  make no-footer                            -> PASS                                             EXIT 0
+Model / provider / mode / usage / validation failures:
+  elevenlabs / eleven_multilingual_v2 / voiceover / 1,536 billed characters / one refused request
+Blocker: location = ElevenLabs quota → cause = the first key had 96 credits left → fix = the owner
+  supplied a key with credits; one generation was made.
+Blocker: location = end of the film → cause = the take ends 0.4 s after the last spoken sound and the
+  track had no tail, so a player could cut the last word → fix = 0.8 s of silence appended in the mix
+  command recorded in audio_plan.md.
+No-footer inspection: PASS (make no-footer). The final scene still ends on the deployment limitation.
+Story/tag claim changes: the story no longer says the closing card gap is open.
+One exact next action: owner listens to the delivered video, then merges the branch.
+```
+
 ## Checkpoint template
 
 ```text

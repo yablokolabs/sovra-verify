@@ -17,24 +17,24 @@ import type { Voiceover } from 'videowright';
  * sentence cited twice has its speaking time split evenly, and no advance is below
  * the floor the renderer needs. The renderer treats a segment's last advance as its
  * whole duration, so that final value is the segment's full narration span rather
- * than a point that stops short of the next section; the seven spans sum to 117.432 s,
- * the length of the narration file, so the closing sentence is never clipped.
+ * than a point that stops short of the next section; the seven spans sum to 115.224 s,
+ * the length of the track (the take plus a 0.8 s silent tail), so the closing sentence is never clipped.
  */
 const voiceover: Voiceover = {
 	audio_file: './audio.mp3',
 	provider: 'elevenlabs',
 	provider_timing_file: './timing.json',
 	eleven_labs_voice_id: 'Xb7hH8MSUJpSbSDYk0k2',
-	notes: 'Audio 117.4 s, 250 words, 1522 billed characters.',
+	notes: 'Audio 114.4 s, 247 words, 1536 billed characters.',
 	timing: {
 		perSegment: {
-			'sovra-problem': [6.223, 13.56],
-			'sovra-corpus': [0.5, 4.075, 8.661, 15.464],
-			'sovra-run': [1.185, 9.73, 18.599],
-			'sovra-finding': [0.5, 4.691, 11.018, 15.744],
-			'sovra-negative': [2.635, 14.245, 21.513],
-			'sovra-review-export': [6.073, 12.609],
-			'sovra-results': [0.5, 12.167, 19.943],
+			'sovra-problem': [6.316, 13.653],
+			'sovra-corpus': [0.5, 3.889, 8.289, 13.224],
+			'sovra-run': [1.021, 7.058, 13.537],
+			'sovra-finding': [0.5, 4.702, 11.018, 15.429],
+			'sovra-negative': [2.276, 14.153, 21.212],
+			'sovra-review-export': [5.677, 11.157],
+			'sovra-results': [0.5, 6.571, 27.012],
 		},
 	},
 };

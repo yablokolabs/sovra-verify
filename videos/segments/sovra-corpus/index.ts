@@ -54,7 +54,7 @@ export default defineSegment({
 	id: 'sovra-corpus',
 	advances: [4.5, 9.0, 13.5, 19.0],
 	voiceover:
-		'Four synthetic documents go in: a master supply agreement, an accounts payable policy, an invoice, and an amendment. Each file is hashed, and its text becomes canonical passages with page and character offsets.',
+		'Four synthetic documents go in: a master supply agreement, an accounts payable policy, an invoice, and an amendment. Each file is hashed, and its text becomes canonical passages.',
 	notes: 'Document grid with hash and extraction metadata.',
 
 	mount(el) {

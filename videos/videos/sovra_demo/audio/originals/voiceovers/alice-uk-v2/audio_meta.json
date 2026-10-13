@@ -6,6 +6,6 @@
   "voice_profile": "premade, British, female, middle_aged",
   "requested_profile": "British, female, young",
   "requested_profile_note": "The British young female voices (Amelia, Annie) are ElevenLabs library voices and the free tier refuses library voices through the API (HTTP 402 paid_plan_required). Voice design and voice cloning are also paid-plan only (HTTP 403 feature_not_available). No spend was authorised, so the closest usable premade voice was used.",
-  "characters_billed": 1522,
-  "audio_seconds": 117.4
+  "characters_billed": 1536,
+  "audio_seconds": 114.4
 }

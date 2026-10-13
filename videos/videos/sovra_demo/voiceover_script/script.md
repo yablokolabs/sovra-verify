@@ -7,20 +7,20 @@ where the next paragraph's first word begins. Assembled by
 `scripts/derive-advances.mjs`; `--check` fails when this file, the segment
 `voiceover` fields and the recorded take stop agreeing.
 
-Narration pace: measured at 2.13 words per second over the recorded take
-(alice-uk-v1, ElevenLabs `eleven_multilingual_v2`). The first generation ran 138 s
+Narration pace: measured at 2.14 words per second over the recorded take
+(alice-uk-v2, ElevenLabs `eleven_multilingual_v2`). The first generation ran 138 s
 and was cut to fit the official two-minute demonstration limit.
 
 | Segment | Words | Recorded span |
 |---|---|---|
-| sovra-problem | 31 | 13.56 s |
-| sovra-corpus | 33 | 15.46 s |
-| sovra-run | 31 | 18.60 s |
-| sovra-finding | 38 | 15.74 s |
-| sovra-negative | 45 | 21.51 s |
-| sovra-review-export | 31 | 12.61 s |
-| sovra-results | 41 | 19.94 s |
-| **Total** | **250** | **117.43 s** |
+| sovra-problem | 31 | 13.65 s |
+| sovra-corpus | 28 | 13.22 s |
+| sovra-run | 25 | 13.54 s |
+| sovra-finding | 38 | 15.43 s |
+| sovra-negative | 45 | 21.21 s |
+| sovra-review-export | 24 | 11.16 s |
+| sovra-results | 56 | 27.01 s |
+| **Total** | **247** | **115.22 s** |
 
 ## sovra-problem
 
@@ -32,13 +32,13 @@ Sovra Verify returns the exact passages.
 
 Four synthetic documents go in: a master supply agreement, an accounts
 payable policy, an invoice, and an amendment. Each file is hashed, and its
-text becomes canonical passages with page and character offsets.
+text becomes canonical passages.
 
 ## sovra-run
 
 Apertus 1.5 70B, hosted on CSCS, reads the passages and nominates typed
 claims: 25 claims found, 10 candidate pairs compared, 13 provider calls,
-none failed, 15,650 tokens, 71 seconds of latency.
+none failed.
 
 ## sovra-finding
 
@@ -55,13 +55,13 @@ human. It does not decide which document wins.
 
 ## sovra-review-export
 
-A reviewer confirms or dismisses each finding, and the decision is recorded
-with a note. Export carries the source hash, the page, the offsets, and the
-model that produced the run.
+A reviewer confirms or dismisses each finding, and the decision is recorded.
+Export carries the source hash, the page, the offsets, and the model.
 
 ## sovra-results
 
-On four documents: 25 claims, 10 pairs compared, 13 calls, zero failures,
-and every displayed citation resolved to an exact slice of canonical text.
-CSCS hosted inference is external network inference, so a local app calling
-CSCS is not air gapped.
+On four documents, every displayed citation resolved to an exact slice of
+canonical text. CSCS hosted inference is external network inference. A local
+application calling CSCS is not air gapped, and Swiss inference residency
+does not establish residency of the whole application. These figures are one
+run over four synthetic documents, not a general accuracy claim.

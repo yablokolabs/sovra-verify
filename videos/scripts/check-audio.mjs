@@ -32,7 +32,7 @@ import { dirname, join, resolve } from 'node:path';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PROJECT = resolve(HERE, '..');
 const VIDEO = join(PROJECT, 'videos', 'sovra_demo');
-const TAKE = join(VIDEO, 'audio', 'originals', 'voiceovers', 'alice-uk-v1');
+const TAKE = join(VIDEO, 'audio', 'originals', 'voiceovers', 'alice-uk-v2');
 const TRACK = join(VIDEO, 'audio', 'tracks', 'v1', 'track.mp3');
 
 const problems = [];

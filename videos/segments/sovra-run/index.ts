@@ -27,7 +27,7 @@ export default defineSegment({
 	id: 'sovra-run',
 	advances: [5.0, 11.0, 20.0],
 	voiceover:
-		'Apertus 1.5 70B, hosted on CSCS, reads the passages and nominates typed claims: 25 claims found, 10 candidate pairs compared, 13 provider calls, none failed, 15,650 tokens, 71 seconds of latency.',
+		'Apertus 1.5 70B, hosted on CSCS, reads the passages and nominates typed claims: 25 claims found, 10 candidate pairs compared, 13 provider calls, none failed.',
 	notes: 'Provider run metadata. Every number is measured, none estimated.',
 
 	mount(el) {

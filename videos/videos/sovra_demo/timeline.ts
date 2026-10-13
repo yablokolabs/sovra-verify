@@ -11,7 +11,7 @@ import defaultAudioTrack from './audio/tracks/v1/track';
  * the measured results and the deployment limit. The last scene ends on the
  * limitation itself; there is no closing card.
  *
- * Audio: VO-only track v1, ElevenLabs narration, 117.4 s.
+ * Audio: VO-only track v1, ElevenLabs narration, 115.2 s.
  */
 const timeline: Timeline = {
 	meta: {

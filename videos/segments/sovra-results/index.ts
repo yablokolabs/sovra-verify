@@ -31,7 +31,7 @@ export default defineSegment({
 	id: 'sovra-results',
 	advances: [6.0, 14.0, 20.0],
 	voiceover:
-		'On four documents: 25 claims, 10 pairs compared, 13 calls, zero failures, and every displayed citation resolved to an exact slice of canonical text. CSCS hosted inference is external network inference, so a local app calling CSCS is not air gapped.',
+		'On four documents, every displayed citation resolved to an exact slice of canonical text. CSCS hosted inference is external network inference. A local application calling CSCS is not air gapped, and Swiss inference residency does not establish residency of the whole application. These figures are one run over four synthetic documents, not a general accuracy claim.',
 	notes: 'Final scene. Ends on substantive limitation content: no closing card, no sign-off, no branding strip.',
 
 	mount(el) {
